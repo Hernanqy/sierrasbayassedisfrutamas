@@ -1,135 +1,104 @@
-'use client';
+"use client";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { Icon } from "./sb-icons";
 
-import { useEffect, useMemo, useState } from 'react';
-import { ArrowLeft, ArrowRight, Award, BookOpen, CalendarDays, Check, CheckCircle2, ChevronRight, CircleHelp, Compass, Eye, Flag, Gift, Headphones, Info, KeyRound, Layers, MapPin, Menu, MessageCircle, Mountain, Pause, Play, Puzzle, Search, ShieldCheck, SkipForward, Sparkles, Star, TrainFront, Trophy, Volume2, VolumeX, X } from 'lucide-react';
-import { culturales, puntos, servicios, type Punto, type Circuito } from '@/data/sierras';
-
-type Vista = 'bienvenida' | 'zona' | 'juego' | 'final' | 'lugares' | 'album' | 'turismo' | 'eventos';
-type Modo = 'tesoro' | 'trivia' | 'puzzle' | 'detective';
-type Respuesta = { valor: string; correcto: boolean };
-const MODOS: {id:Modo;titulo:string;sub:string;icono:typeof Compass;tono:string;duracion:string}[] = [
-  {id:'tesoro',titulo:'Búsqueda del tesoro',sub:'Seguí pistas y encontrá la respuesta',icono:KeyRound,tono:'naranja',duracion:'5 min'},
-  {id:'trivia',titulo:'Preguntas y respuestas',sub:'Aprendé jugando',icono:CircleHelp,tono:'violeta',duracion:'3 min'},
-  {id:'puzzle',titulo:'Reconstruí la historia',sub:'Ordená las piezas de un mensaje',icono:Puzzle,tono:'menta',duracion:'4 min'},
-  {id:'detective',titulo:'Detective del lugar',sub:'Observá y descubrí',icono:Eye,tono:'rosa',duracion:'4 min'},
+type Screen = "landing" | "host" | "games" | "intro" | "play" | "success" | "reward" | "passport" | "places" | "map" | "events" | "tourism";
+type GameMode = "treasure" | "quiz" | "story" | "detective";
+type Place = { code:string; name:string; circuit:"Aventura"|"Histórico"; theme:string; kind:string };
+const places: Place[] = [
+  { code: "1", name: "Museo de la Estación", circuit: "Histórico", theme: "ferrocarril", kind: "history" },
+  { code: "2", name: "Club San Martín", circuit: "Histórico", theme: "vida social", kind: "history" },
+  { code: "3", name: "Antiguo Barrio Fábrica", circuit: "Histórico", theme: "barrio obrero", kind: "history" },
+  { code: "4", name: "Monumento al Primer Despacho de Cemento | Antigua Fábrica de Cemento", circuit: "Histórico", theme: "cemento", kind: "history" },
+  { code: "5", name: "Iglesia Cristo Rey", circuit: "Histórico", theme: "comunidad", kind: "history" },
+  { code: "6", name: "Monumento Centro del Universo", circuit: "Histórico", theme: "identidad", kind: "history" },
+  { code: "7", name: "Monumento al Trabajador del Cemento", circuit: "Histórico", theme: "trabajo", kind: "history" },
+  { code: "8", name: "Paraje Huecu Fu Hum", circuit: "Histórico", theme: "memoria", kind: "history" },
+  { code: "9", name: "Paseo de las Vagonetas", circuit: "Histórico", theme: "ferrocarril", kind: "history" },
+  { code: "10", name: "La Calera 1888", circuit: "Histórico", theme: "minería", kind: "history" },
+  { code: "11", name: "Antigua Calera La Libertadora", circuit: "Histórico", theme: "caleras", kind: "history" },
+  { code: "12", name: "Calera Piatti - Mouriño", circuit: "Histórico", theme: "caleras", kind: "history" },
+  { code: "13", name: "Calera La Victoria", circuit: "Histórico", theme: "caleras", kind: "history" },
+  { code: "14", name: "Antiguas casas de piedra", circuit: "Histórico", theme: "arquitectura", kind: "history" },
+  { code: "15", name: "Réplica Casa Matilde Catriel", circuit: "Histórico", theme: "memoria", kind: "history" },
+  { code: "16", name: "Boca Sierra", circuit: "Histórico", theme: "primer asentamiento minero", kind: "history" },
+  { code: "A", name: "Mirador de Cantera", circuit: "Aventura", theme: "paisaje", kind: "adventure" },
+  { code: "B", name: "Cerro Matilde y Parque Matilde Catriel", circuit: "Aventura", theme: "cerro", kind: "adventure" },
+  { code: "C", name: "Mirador del Paseo del Mástil Carlos Medici", circuit: "Aventura", theme: "mirador", kind: "adventure" },
+  { code: "D", name: "Mirador Monte de los Fresnos", circuit: "Aventura", theme: "reserva", kind: "adventure" },
+  { code: "E", name: "Mirador Cerro del Diablo", circuit: "Aventura", theme: "reserva", kind: "adventure" },
+  { code: "F", name: "Paseo Recuperado", circuit: "Aventura", theme: "recorrido", kind: "adventure" },
+  { code: "G", name: "Cerro Largo", circuit: "Aventura", theme: "paisaje", kind: "adventure" },
+  { code: "H", name: "Boca Sierra", circuit: "Aventura", theme: "memoria", kind: "adventure" },
+  { code: "I", name: "Cerro Aguirre (San Cayetano)", circuit: "Aventura", theme: "cerro", kind: "adventure" },
+  { code: "J", name: "Parque Biciesenda", circuit: "Aventura", theme: "movimiento", kind: "adventure" },
 ];
-const CLAVE='sb-aventuras-tramo4-v1';
-const estacion = puntos.find(p=>p.id==='1') ?? puntos[10];
-const nombreCircuito=(c:Circuito)=>c==='historico'?'Histórico':'Aventura';
-const opcionesModo = (tipo:Modo, lugar:Punto) => {
-  const esEstacion=lugar.id==='1';
-  if(tipo==='tesoro') return {
-    introduccion:esEstacion?'Primera pista: este lugar forma parte del circuito que conserva testimonios del pasado de la localidad.':'Primera pista: consultá el nombre de esta parada y su circuito del folleto.',
-    pregunta:esEstacion?'¿En qué circuito del folleto turístico aparece el Museo de la Estación?':`¿En qué circuito aparece «${lugar.nombre}»?`,
-    opciones:['Circuito Aventura','Circuito Histórico','Servicios turísticos'], correcta:lugar.circuito==='historico'?1:0,
-    cierre:esEstacion?'Encontraste la primera pieza: la Estación pertenece al Circuito Histórico.':'Encontraste una pista del recorrido real del folleto.'
-  };
-  if(tipo==='trivia') return {
-    introduccion:'Poné a prueba lo que sabés sobre el lugar seleccionado.',
-    pregunta:esEstacion?'¿Con qué actividad se relaciona directamente el Museo de la Estación?':`¿Cómo figura clasificado «${lugar.nombre}» en el folleto turístico?`,
-    opciones:esEstacion?['Ferrocarril','Astronomía','Navegación marítima']:['Circuito Histórico','Circuito Aventura','Ninguno'],
-    correcta:esEstacion?0:lugar.circuito==='historico'?0:1,
-    cierre:esEstacion?'¡Exacto! La estación está vinculada con la historia ferroviaria.':'¡Bien! Identificaste el recorrido correspondiente.'
-  };
-  if(tipo==='detective') return {
-    introduccion:'Buscá información en la ficha del lugar. No hace falta que arriesgues tu seguridad para observar nada.',
-    pregunta:esEstacion?'¿Cuál de estos lugares figura como espacio cultural en el folleto?':`¿Qué dato del folleto es correcto sobre «${lugar.nombre}»?`,
-    opciones:esEstacion?['Museo de la Estación','Puerto de Sierras Bayas','Aeropuerto de Sierras Bayas']:[`Está en el Circuito ${nombreCircuito(lugar.circuito)}`,'Es una terminal aérea','No figura en el folleto'],
-    correcta:0,
-    cierre:'¡Buena observación! Aprender a reconocer los lugares también es parte de la aventura.'
-  };
-  return {
-    introduccion:'Uní las pistas para reconstruir la información de este lugar.',
-    pregunta:esEstacion?'Completá: Museo de la ___ — Circuito ___.':`Completá: «${lugar.nombre}» pertenece al circuito...`,
-    opciones:esEstacion?['Estación — Histórico','Piedra — Aventura','Costa — Histórico']:[`Circuito ${nombreCircuito(lugar.circuito)}`,'Circuito marítimo','Circuito inexistente'],
-    correcta:0,
-    cierre:'¡Reconstrucción completada! Sumaste una pieza a tu pasaporte.'
-  };
-};
-
-export default function Home(){
- const [vista,setVista]=useState<Vista>('bienvenida');
- const [lugar,setLugar]=useState<Punto>(estacion);
- const [modo,setModo]=useState<Modo>('tesoro');
- const [respuesta,setRespuesta]=useState<number|null>(null);
- const [paso,setPaso]=useState(0);
- const [hechos,setHechos]=useState<string[]>([]);
- const [cargado,setCargado]=useState(false);
- const [menu,setMenu]=useState(false);
- const [buscar,setBuscar]=useState('');
- const [filtro,setFiltro]=useState<'todos'|Circuito>('todos');
- const [voz,setVoz]=useState(false);
- const [revelado,setRevelado]=useState(false);
- useEffect(()=>{
-  try { const prev=JSON.parse(localStorage.getItem(CLAVE)||'[]'); if(Array.isArray(prev)) setHechos(prev.filter((x):x is string=>typeof x==='string')); }catch{}
-  const parametro=new URLSearchParams(window.location.search).get('lugar');
-  const encontrado=puntos.find(p=>p.id===parametro);
-  if(encontrado)setLugar(encontrado);
-  setCargado(true);
- },[]);
- useEffect(()=>{if(cargado)localStorage.setItem(CLAVE,JSON.stringify(hechos));},[hechos,cargado]);
- useEffect(()=>()=>{if(typeof window!=='undefined'&&'speechSynthesis' in window)window.speechSynthesis.cancel();},[]);
- const datos=useMemo(()=>opcionesModo(modo,lugar),[modo,lugar]);
- const llave=`${lugar.id}:${modo}`;
- const realizado=hechos.includes(llave);
- const puntosTotales=hechos.length*50;
- const cromos=[...new Set(hechos.map(h=>h.split(':')[0]))];
- const textoPersonaje=`¡Hola, explorador! Estás en ${lugar.nombre}, Sierras Bayas. Acá hay algo por descubrir. Elegí tu juego, completá el desafío y ganá un sello. ¿Te animás?`;
- function detenerVoz(){if('speechSynthesis' in window)window.speechSynthesis.cancel();setVoz(false);}
- function hablar(){if(!('speechSynthesis' in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(textoPersonaje);u.lang='es-AR';u.rate=.97;u.onend=()=>setVoz(false);u.onerror=()=>setVoz(false);window.speechSynthesis.speak(u);setVoz(true);}
- function navegar(v:Vista){detenerVoz();setMenu(false);setVista(v);setRespuesta(null);setPaso(0);setRevelado(false);window.scrollTo({top:0,behavior:'smooth'});}
- function iniciar(m:Modo){setModo(m);setRespuesta(null);setPaso(0);setRevelado(false);navegar('juego');}
- function terminar(){if(!hechos.includes(llave))setHechos(p=>[...p,llave]);navegar('final');}
- function elegirLugar(p:Punto){setLugar(p);navegar('bienvenida');if(typeof window!=='undefined')window.history.replaceState(null,'',`?lugar=${encodeURIComponent(p.id)}`);}
- const visibles=puntos.filter(p=>(filtro==='todos'||p.circuito===filtro)&&p.nombre.toLowerCase().includes(buscar.toLowerCase()));
- return <div className="sb-app">
-  <header className="sb-header"><button className="sb-logo" onClick={()=>navegar('bienvenida')} aria-label="Volver al inicio"><strong>Sierras Bayas</strong><span>SE DISFRUTA MÁS</span></button><div className="sb-header-actions"><span className="sb-score"><Star size={16} fill="currentColor"/> {puntosTotales}</span><button className="sb-menu-btn" onClick={()=>setMenu(!menu)} aria-label="Abrir menú">{menu?<X/>:<Menu/>}</button></div></header>
-  {menu&&<div className="sb-dropdown">{([{v:'zona',t:'Elegir juego',i:Compass},{v:'lugares',t:'Todas las aventuras',i:MapPin},{v:'album',t:'Mi pasaporte',i:Layers},{v:'eventos',t:'Eventos',i:CalendarDays},{v:'turismo',t:'Información turística',i:Info}] as const).map(x=><button key={x.v} onClick={()=>navegar(x.v)}><x.i size={19}/>{x.t}<ChevronRight size={17}/></button>)}</div>}
-  <main className={'sb-main sb-'+vista}>
-  {vista==='bienvenida'&&<section className="sb-welcome"><div className="sb-welcome-orbit"><span className="sb-orbit-a"><TrainFront/></span><span className="sb-orbit-b"><Mountain/></span><span className="sb-orbit-c"><Star/></span><div className="sb-mascot"><Compass size={77} strokeWidth={1.5}/><span>¡HOLA!</span></div></div><div className="sb-kicker white">UNA AVENTURA EN EL LUGAR REAL</div><h1>¡Bienvenido a<br/>Sierras Bayas!</h1><p>Descubrí historias. Superá desafíos. Coleccioná recuerdos.</p><button className="sb-cta light" onClick={()=>navegar('zona')}>Entrar a la aventura <ArrowRight/></button><button className="sb-link-light" onClick={()=>navegar('turismo')}>Solo quiero conocer Sierras Bayas</button><small className="sb-welcome-note"></small></section>}
-  {vista==='zona'&&<section className="sb-stage">
-    <div className="sb-stage-top">
-      <span className="sb-pill"><MapPin size={14}/> {lugar.nombre}</span>
-      <button className="sb-change-place" onClick={()=>navegar('lugares')}>Cambiar <ChevronRight size={15}/></button>
-    </div>
-    <div className="sb-host-card">
-      <div className="sb-host-art" aria-label="Espacio reservado para futuro personaje animado">
-        <span className="sb-host-spark sb-host-spark-one">✦</span>
-        <span className="sb-host-spark sb-host-spark-two">✳</span>
-        <Compass size={70} strokeWidth={1.45}/>
-        <span className="sb-host-avatar-label">TU ANFITRIÓN</span>
-      </div>
-      <div className="sb-host-copy">
-        <span className="sb-host-eyebrow">ESTÁS EN SIERRAS BAYAS</span>
-        <h1>¡Hola, explorador!</h1>
-        <p>Estás en <strong>{lugar.nombre}</strong>.<br/>¿Te animás a un desafío?</p>
-        <button className="sb-host-audio" onClick={voz?detenerVoz:hablar}>
-          {voz?<VolumeX size={19}/>:<Volume2 size={19}/>} {voz?'Detener saludo':'Escuchar saludo'}
-        </button>
-      </div>
-    </div>
-    <div className="sb-game-title">
-      <div><span>EL PRÓXIMO PASO</span><h2>Elegí tu juego</h2></div>
-      <span className="sb-game-count">4 desafíos</span>
-    </div>
-    <div className="sb-game-tiles">
-      {MODOS.map(m=><button key={m.id} className={'sb-game-tile '+m.tono} onClick={()=>iniciar(m.id)}>
-        <span className="sb-tile-icon"><m.icono size={39} strokeWidth={1.9}/></span>
-        <span className="sb-tile-name">{m.id==='tesoro'?'Buscá el tesoro':m.id==='trivia'?'Preguntas':m.id==='puzzle'?'Armá la historia':'Detective'}</span>
-        <span className="sb-tile-foot"><span>{m.duracion}</span>{hechos.includes(`${lugar.id}:${m.id}`)?<CheckCircle2 size={17}/>:<ArrowRight size={17}/>}</span>
-      </button>)}
-    </div>
-    <div className="sb-stage-footer"><button onClick={()=>navegar('lugares')}><MapPin size={18}/> Otros lugares</button><button onClick={()=>navegar('album')}><Layers size={18}/> Mi álbum</button></div>
-  </section>}
-  {vista==='juego'&&<><button className="sb-back" onClick={()=>navegar('zona')}><ArrowLeft size={18}/> Volver a los juegos</button><div className="sb-play-head"><span className="sb-kicker">{lugar.nombre.toUpperCase()}</span><h1>{MODOS.find(m=>m.id===modo)?.titulo}</h1><div className="sb-progress"><span className={paso>=0?'filled':''}/><span className={paso>=1?'filled':''}/><span className={paso>=2?'filled':''}/></div><p>Etapa {Math.min(paso+1,3)} de 3</p></div><div className="sb-game-panel">{paso===0&&<><div className="sb-game-emblem"><KeyRound size={50}/></div><div className="sb-kicker">TU MISIÓN</div><h2>¿Te animás a descubrirlo?</h2><p>{datos.introduccion}</p><div className="sb-tip"><Info size={20}/><span>Esta primera versión utiliza información comprobable del folleto. Las pistas de observación presencial se incorporarán tras verificar cada sitio.</span></div><button className="sb-cta" onClick={()=>setPaso(1)}>Comenzar desafío <ArrowRight/></button></>}
-  {paso===1&&<><div className="sb-game-emblem"><CircleHelp size={49}/></div><div className="sb-kicker">RESOLVÉ LA PISTA</div><h2>{datos.pregunta}</h2><div className="sb-answers">{datos.opciones.map((x,i)=><button key={x} className={'sb-answer '+(respuesta===i?'chosen':'')} onClick={()=>setRespuesta(i)}><span>{String.fromCharCode(65+i)}</span>{x}{respuesta===i&&<Check size={19}/>}</button>)}</div>{respuesta!==null&&<p className={'sb-feedback '+(respuesta===datos.correcta?'ok':'bad')}>{respuesta===datos.correcta?'¡Correcto! Encontraste la pista.':'Todavía no. Podés intentarlo otra vez.'}</p>}<button className="sb-cta" disabled={respuesta!==datos.correcta} onClick={()=>setPaso(2)}>Continuar <ArrowRight/></button></>}
-  {paso===2&&<><div className="sb-game-emblem success"><CheckCircle2 size={55}/></div><div className="sb-kicker">PISTA RESUELTA</div><h2>¡Descubrimiento logrado!</h2><p>{datos.cierre}</p><p>Ahora podés registrar tu sello en el pasaporte de Sierras Bayas.</p><button className="sb-cta" onClick={terminar}>Obtener recompensa <Award/></button></>}</div></>}
-  {vista==='final'&&<section className="sb-win"><div className="sb-kicker">MISIÓN COMPLETADA</div><h1>¡Lo lograste!</h1><p>Terminaste tu desafío en <strong>{lugar.nombre}</strong>.</p><div className="sb-stamp"><span>SIERRAS BAYAS</span><Award size={83}/><strong>{lugar.codigo}</strong><small>SELLO DEL LUGAR</small></div><h2>{realizado?'¡Nuevo hallazgo para tu colección!':'¡Ya tenías este sello!'}</h2><p>Los sellos se conservan. Cada modalidad superada suma 50 puntos de prueba, una sola vez.</p><div className="sb-win-actions"><button className="sb-cta" onClick={()=>navegar('zona')}>Jugar otra modalidad <ArrowRight/></button><button className="sb-outline" onClick={()=>navegar('album')}>Ver mi pasaporte</button><button className="sb-textlink" onClick={()=>navegar('lugares')}>Descubrir otras aventuras</button></div></section>}
-  {vista==='lugares'&&<><button className="sb-back" onClick={()=>navegar('zona')}><ArrowLeft size={18}/> Volver</button><div className="sb-section-title"><div className="sb-kicker">UN TERRITORIO, MUCHAS HISTORIAS</div><h1>Elegí dónde jugar</h1><p>Paradas con nombres y circuitos del folleto de Sierras Bayas. Su posición exacta todavía no está verificada con GPS.</p></div><div className="sb-filterbar"><button className={filtro==='todos'?'active':''} onClick={()=>setFiltro('todos')}>Todos (26)</button><button className={filtro==='historico'?'active':''} onClick={()=>setFiltro('historico')}>Histórico (16)</button><button className={filtro==='aventura'?'active':''} onClick={()=>setFiltro('aventura')}>Aventura (10)</button></div><div className="sb-search"><Search size={19}/><input placeholder="Buscar un lugar..." value={buscar} onChange={e=>setBuscar(e.target.value)}/></div><div className="sb-place-list">{visibles.map(p=><button key={p.id} onClick={()=>elegirLugar(p)}><span className={'sb-place-tag '+p.circuito}>{p.codigo}</span><span><strong>{p.nombre}</strong><small>Circuito {nombreCircuito(p.circuito)} · {hechos.some(x=>x.startsWith(p.id+':'))?'Con sello':'Por descubrir'}</small></span><ChevronRight size={19}/></button>)}</div><div className="sb-tip"><ShieldCheck size={20}/><span>Para GPS y navegación real incorporaremos una base cartográfica verificada. Por ahora no mostramos ubicaciones inventadas.</span></div></>}
-  {vista==='album'&&<><button className="sb-back" onClick={()=>navegar('zona')}><ArrowLeft size={18}/> Volver</button><div className="sb-section-title"><div className="sb-kicker">PASAPORTE DIGITAL</div><h1>Mi colección</h1><p>Un lugar, un sello. Podés volver y jugar otras modalidades para sumar puntos.</p></div><div className="sb-album-summary"><Trophy size={40}/><strong>{cromos.length} / 26</strong><span>sellos descubiertos</span><b>{puntosTotales} puntos de prueba</b></div><div className="sb-stamp-grid">{puntos.map(p=><button key={p.id} className={'sb-mini-stamp '+(cromos.includes(p.id)?'won':'locked')} onClick={()=>elegirLugar(p)}><span>{cromos.includes(p.id)?<Award size={33}/>:<span>?</span>}</span><strong>{cromos.includes(p.id)?p.nombre:'Por descubrir'}</strong><small>{p.codigo} · {nombreCircuito(p.circuito)}</small></button>)}</div><div className="sb-tip"><Gift size={21}/><span>Los puntos y premios son demostrativos. Un futuro canje real requerirá cuenta de usuario, confirmación desde el servidor y control de entregas.</span></div></>}
-  {vista==='eventos'&&<><button className="sb-back" onClick={()=>navegar('zona')}><ArrowLeft size={18}/> Volver</button><div className="sb-section-title"><div className="sb-kicker">EXPERIENCIAS QUE CAMBIAN</div><h1>Eventos especiales</h1><p>Más adelante se activarán desafíos temporales en fechas y actividades confirmadas.</p></div><div className="sb-empty"><CalendarDays size={48}/><h2>Próximas activaciones</h2><p>No hay eventos cargados todavía. No mostraremos fechas ni premios sin confirmación.</p></div></>}
-  {vista==='turismo'&&<><button className="sb-back" onClick={()=>navegar('zona')}><ArrowLeft size={18}/> Volver</button><div className="sb-section-title"><div className="sb-kicker">TAMBIÉN TE ACOMPAÑAMOS</div><h1>Conocé Sierras Bayas</h1><p>Información complementaria de la localidad, según el folleto suministrado.</p></div><h2 className="sb-small-title">Espacios culturales</h2><div className="sb-tour-list">{culturales.map(x=><div key={x}><BookOpen size={20}/><strong>{x}</strong></div>)}</div><h2 className="sb-small-title">Servicios</h2><div className="sb-tour-list">{servicios.map(x=><div key={x.nombre}><MapPin size={20}/><span><strong>{x.nombre}</strong><small>{x.dato}</small></span></div>)}</div><div className="sb-tip"><Info size={20}/><span>Los datos provienen del folleto aportado. Horarios, direcciones, servicios y teléfonos requieren verificación antes del lanzamiento público.</span></div></>}
-  </main>
-  {vista!=='bienvenida'&&<nav className="sb-bottom" aria-label="Secciones"><button className={vista==='zona'||vista==='juego'?'active':''} onClick={()=>navegar('zona')}><Compass/><span>Jugar</span></button><button className={vista==='lugares'?'active':''} onClick={()=>navegar('lugares')}><MapPin/><span>Lugares</span></button><button className={vista==='album'||vista==='final'?'active':''} onClick={()=>navegar('album')}><Layers/><span>Álbum</span></button><button className={vista==='eventos'?'active':''} onClick={()=>navegar('eventos')}><CalendarDays/><span>Eventos</span></button><button className={vista==='turismo'?'active':''} onClick={()=>navegar('turismo')}><Info/><span>Turismo</span></button></nav>}
- </div>;
+const games = [
+ {id:"treasure",title:"Buscá el tesoro",icon:"key",tone:"gold",time:"5 min",intro:"Revelá las pistas de a una y descubrí la respuesta."},
+ {id:"quiz",title:"Preguntas",icon:"quiz",tone:"blue",time:"3 min",intro:"Respondé tres preguntas sobre el lugar."},
+ {id:"story",title:"Armá la historia",icon:"puzzle",tone:"mint",time:"4 min",intro:"Tocá las piezas en orden para reconstruir el mensaje."},
+ {id:"detective",title:"Detective",icon:"eye",tone:"clay",time:"4 min",intro:"Identificá la parada correcta entre las pistas."},
+] as const;
+const rewards:Record<GameMode,number>={treasure:100,quiz:80,story:90,detective:110};
+const navs = [{id:"games",label:"Jugar",icon:"compass"},{id:"places",label:"Lugares",icon:"pin"},{id:"passport",label:"Álbum",icon:"book"},{id:"events",label:"Eventos",icon:"calendar"},{id:"tourism",label:"Turismo",icon:"info"}] as const;
+const normalize=(s:string)=>s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+const ART="/sierras-bayas/aventura/";
+const gameAsset:Record<GameMode,string>={treasure:"tesoro.png",quiz:"preguntas.png",story:"historia.png",detective:"detective.png"};
+const badgeAsset=(c:Place["circuit"])=>ART+(c==="Histórico"?"medalla-historica.png":"medalla-aventura.png");
+const routeAsset=(c:Place["circuit"])=>ART+(c==="Histórico"?"circuito-historico.png":"circuito-aventura.png");
+const codeLabel=(c:string)=>/^\d+$/.test(c)?c.padStart(2,"0"):c;
+function Button({children,onClick,disabled=false,secondary=false}:{children:ReactNode;onClick:()=>void;disabled?:boolean;secondary?:boolean}){return <button className={secondary?"btn secondary":"btn"} onClick={onClick} disabled={disabled}>{children}{!secondary&&<Icon name="arrow" size={20}/>}</button>}
+function Head({kicker,title,sub}:{kicker:string;title:string;sub?:string}){return <div className="headline"><span className="kicker">{kicker}</span><h1>{title}</h1>{sub&&<p>{sub}</p>}</div>}
+function Pill({children}:{children:ReactNode}){return <span className="pill">{children}</span>}
+function Back({onClick,children="Volver"}:{onClick:()=>void;children?:ReactNode}){return <button className="back" onClick={onClick}><Icon name="back" size={18}/>{children}</button>}
+function choiceList(question:number,p:Place,other:Place){if(question===0)return {question:"¿Qué circuito estás recorriendo?",options:["Aventura","Histórico","Ninguno"],answer:p.circuit};if(question===1)return {question:"¿Cuál es el tema de esta parada?",options:[...new Set([other.theme,p.theme,"navegación marítima"])],answer:p.theme};return {question:"¿Qué lugar estás explorando?",options:[other.name,p.name,"Un lugar fuera del folleto"],answer:p.name}}
+export default function SierrasBayasApp(){
+ const [screen,setScreen]=useState<Screen>("landing"),[place,setPlace]=useState<Place>(places[0]),[mode,setMode]=useState<GameMode>("treasure");
+ const [points,setPoints]=useState(0),[earned,setEarned]=useState<string[]>([]),[ready,setReady]=useState(false);
+ const [answer,setAnswer]=useState(""),[feedback,setFeedback]=useState(""),[clue,setClue]=useState(false),[question,setQuestion]=useState(0),[pieces,setPieces]=useState<number[]>([]),[newPoints,setNewPoints]=useState(0),[voice,setVoice]=useState(false);
+ const [search,setSearch]=useState(""),[filter,setFilter]=useState<"Todos"|Place["circuit"]>("Todos");
+ const [albumPage,setAlbumPage]=useState(0);
+ const finishing=useRef(false);
+ useEffect(()=>{try{const val=Number(localStorage.getItem("sb_points")||"0");setPoints(Number.isFinite(val)&&val>=0?val:0);const raw=JSON.parse(localStorage.getItem("sb_earned")||"[]");if(Array.isArray(raw))setEarned([...new Set(raw.filter((s):s is string=>typeof s==="string"))]);const q=new URLSearchParams(window.location.search).get("lugar");if(q){const found=places.find(p=>p.code.toLowerCase()===q.toLowerCase());if(found)setPlace(found)}}catch{}finally{setReady(true)}return()=>{if("speechSynthesis" in window)window.speechSynthesis.cancel()}},[]);
+ useEffect(()=>{if(!ready)return;try{localStorage.setItem("sb_points",String(points));localStorage.setItem("sb_earned",JSON.stringify(earned))}catch{}},[ready,points,earned]);
+ const game=games.find(g=>g.id===mode)!;const stampId=place.code+"-"+mode;const completed=earned.includes(stampId);
+ const foundPlaces=places.filter(p=>earned.some(e=>e.startsWith(p.code+"-")));
+ const other=places.find(p=>p.code!==place.code&&p.theme!==place.theme&&p.name!==place.name)!;
+ const welcome="¡Hola, explorador! Estás en "+place.name+". Elegí un juego, resolvé el desafío y conseguí tu sello.";
+ function go(next:Screen){if("speechSynthesis" in window)window.speechSynthesis.cancel();setVoice(false);setFeedback("");setScreen(next);window.scrollTo({top:0,behavior:"auto"})}
+ function chooseCircuit(c:Place["circuit"]|"Todos"){setFilter(c);setSearch("");go("places")}
+ function select(p:Place){setPlace(p);const url=new URL(window.location.href);url.searchParams.set("lugar",p.code);history.replaceState(null,"",url);go("host")}
+ function start(m:GameMode){finishing.current=false;setMode(m);setAnswer("");setFeedback("");setClue(false);setQuestion(0);setPieces([]);go("intro")}
+ function speak(){if(!("speechSynthesis" in window)){setFeedback("El audio no está disponible en este navegador.");return}if(voice){window.speechSynthesis.cancel();setVoice(false);return}const u=new SpeechSynthesisUtterance(welcome);u.lang="es-AR";u.rate=.97;u.onend=()=>setVoice(false);u.onerror=()=>setVoice(false);setVoice(true);window.speechSynthesis.speak(u)}
+ function submit(correct:string){if(answer!==correct){setFeedback("Probá otra vez. ¡Vos podés!");return}if(mode==="quiz"&&question<2){setQuestion(q=>q+1);setAnswer("");setFeedback("");return}go("success")}
+ function finish(){if(!ready||finishing.current)return;finishing.current=true;const added=completed?0:rewards[mode];setNewPoints(added);if(!completed){setEarned(prev=>prev.includes(stampId)?prev:[...prev,stampId]);setPoints(p=>p+added)}go("reward")}
+ const visible=places.filter(p=>(filter==="Todos"||p.circuit===filter)&&normalize(p.name+" "+p.code).includes(normalize(search)));
+ const quiz=choiceList(question,place,other);
+ const detective=[places.find(p=>p.code==="G")!, place, places[1],other].filter((p,i,a)=>a.findIndex(x=>x.code===p.code)===i);
+ const story=["Sierras Bayas","Circuito "+place.circuit,place.name];
+ const active=screen==="passport"||screen==="reward"?"passport":screen==="places"||screen==="map"||screen==="host"?"places":screen==="events"?"events":screen==="tourism"?"tourism":"games";
+ function row(p:Place,sub?:string){return <button key={p.code} className="place-row" onClick={()=>select(p)}><span className={"code "+(p.circuit==="Aventura"?"mint":"gold")}>{codeLabel(p.code)}</span><span className="row-text"><strong>{p.name}</strong><small>{sub||p.circuit+" · "+(foundPlaces.some(x=>x.code===p.code)?"Con sello":"Por descubrir")}</small></span><Icon name="arrow" size={20}/></button>}
+ function options(items:string[]){return <div className="options">{items.map((v,i)=><button key={v} className={"answer "+(answer===v?"chosen":"")} onClick={()=>{setAnswer(v);setFeedback("")}} aria-pressed={answer===v}><span>{String.fromCharCode(65+i)}</span>{v}</button>)}</div>}
+ return <div className="sb-page"><div className={"phone-shell "+(screen==="landing"?"landing-shell":"")}>
+ {screen==="landing"?<section className="welcome"><div className="welcome-top"><img src="/sierras-bayas/logo.svg" alt="" width="38" height="38"/><span>SIERRAS BAYAS</span><h1>Descubrí las<br/>sierras.</h1><p>Cada lugar, una historia.</p></div><div className="welcome-bottom"><p>Explorá. Descubrí. Coleccioná.</p><Button onClick={()=>go("games")}>Comenzar la aventura</Button></div></section>:<>
+ <header className="topbar"><button className="brand" onClick={()=>go("landing")}><Icon name="hill"/><strong>Sierras Bayas</strong></button><span className="score"><Icon name="star" size={18}/>{points}</span></header>
+ <main className={"content screen-"+screen}>
+ {screen==="games"&&<><div className="location"><Icon name="pin" size={18}/><strong>{place.name}</strong><button onClick={()=>go("places")}>Cambiar ›</button><button onClick={speak} aria-label={voice?"Detener saludo":"Escuchar saludo"}><Icon name="audio" size={20}/></button></div>{feedback&&<p role="status">{feedback}</p>}<div className="adventure-heading"><span className="kicker">¡HOLA, EXPLORADOR!</span><h1>Elegí tu juego</h1><p>¿Qué vas a descubrir hoy?</p></div><div className="game-grid floating-games">{games.map(g=><button className="floating-game" key={g.id} onClick={()=>start(g.id)}><img src={ART+gameAsset[g.id]} alt="" draggable={false}/><strong>{g.title}</strong><span>{g.time}{earned.includes(place.code+"-"+g.id)?" · ✓":""}</span></button>)}</div><button className="passport-link" onClick={()=>go("passport")}><img src={ART+"pasaporte.png"} alt="" draggable={false}/><strong>Mi pasaporte</strong><small>{foundPlaces.length} de 26 sellos</small></button></>}
+ {screen==="places"&&<><div className="adventure-heading"><span className="kicker">26 PARADAS PARA DESCUBRIR</span><h1>Explorá Sierras Bayas</h1><p>Elegí tu circuito</p></div><div className="route-objects">{(["Histórico","Aventura"] as const).map(c=><button key={c} className={"route-object "+(filter===c?"selected":"")} aria-pressed={filter===c} onClick={()=>chooseCircuit(c)}><img src={routeAsset(c)} alt=""/><strong>Circuito {c}</strong><small>{foundPlaces.filter(p=>p.circuit===c).length} / {c==="Histórico"?16:10} sellos</small></button>)}</div><button className="map-link" onClick={()=>go("map")}><img src={ART+"mapa-pergamino.png"} alt=""/><span>Desplegar mapa</span><Icon name="arrow"/></button><div className="filters"><button className={filter==="Todos"?"active":""} onClick={()=>chooseCircuit("Todos")}>Todos · 26</button><span className="route-filter-label">{filter==="Todos"?"Todas las paradas":filter}</span></div><label className="search"><Icon name="search"/><input placeholder="Buscar un lugar..." value={search} onChange={e=>setSearch(e.target.value)}/></label><div className="route-trail">{visible.map(p=>row(p))}{!visible.length&&<p>No encontramos ese lugar.</p>}</div><p className="note">Ubicaciones GPS pendientes de validación.</p></>}
+ {screen==="map"&&<><Back onClick={()=>go("places")}/><div className="adventure-heading"><span className="kicker">EXPLORÁ EL TERRITORIO</span><h1>Mapa de aventuras</h1></div><img className="scroll-map" src={ART+"mapa-pergamino.png"} alt="Ilustración decorativa de un sendero, sin ubicaciones geográficas"/><p className="note map-note">Mapa ilustrativo · no sirve para navegación.</p><div className="route-objects compact-routes">{(["Histórico","Aventura"] as const).map(c=><button className="route-object" key={c} onClick={()=>chooseCircuit(c)}><img src={routeAsset(c)} alt=""/><strong>{c}</strong></button>)}</div><Button secondary onClick={()=>chooseCircuit("Todos")}>Ver todas las paradas</Button></>}
+ {screen==="host"&&<><Back onClick={()=>go("places")}/><Head kicker={"CIRCUITO "+place.circuit.toUpperCase()+" · "+codeLabel(place.code)} title={place.name}/><div className="place-diorama"><img src={routeAsset(place.circuit)} alt={"Ilustración representativa del circuito "+place.circuit}/></div><div className="pills"><Pill>{place.circuit}</Pill><Pill>{place.theme}</Pill><Pill>Parada {codeLabel(place.code)}</Pill></div><p className="body-copy">Descubrí esta parada del circuito {place.circuit.toLowerCase()} y su vínculo con {place.theme}.</p><Button onClick={()=>go("games")}>Jugar en este lugar</Button><Button secondary onClick={speak}><Icon name="audio" size={18}/>{voice?"Detener saludo":"Escuchar saludo"}</Button></>}
+ {screen==="intro"&&<><Back onClick={()=>go("games")}>Juegos</Back><Head kicker={place.name.toUpperCase()} title={game.title}/><div className="game-object"><img src={ART+gameAsset[mode]} alt="" /></div><h2>{mode==="treasure"?"Una pista escondida":"Tu desafío"}</h2><p className="body-copy">{game.intro}</p><Button onClick={()=>go("play")}>¡Jugar!</Button><Button secondary onClick={()=>go("games")}>Elegir otro juego</Button></>}
+ {screen==="play"&&<><Back onClick={()=>go("games")}>Juegos</Back><div className="game-head"><img className="challenge-object" src={ART+gameAsset[mode]} alt=""/><Head kicker={place.name.toUpperCase()} title={game.title} sub={mode==="quiz"?"Pregunta "+(question+1)+" de 3":mode==="story"?pieces.length+" de 3 piezas":"Desafío del lugar"}/></div>
+ {mode==="treasure"&&<><div className="pills"><Pill>01</Pill><Pill>{clue?"02 ✓":"02"}</Pill><Pill>Sello</Pill></div><div className="panel"><span className="kicker">PISTA 01</span><h2>Una parada para descubrir</h2><p>{place.name}</p></div>{clue?<div className="panel"><span className="kicker">PISTA 02</span><p>Este lugar se relaciona con {place.theme}.</p></div>:<button className="text-link" onClick={()=>setClue(true)}><Icon name="star"/> Revelar otra pista</button>}<h2>¿En qué circuito aparece?</h2>{options(["Aventura","Histórico"])}<Button disabled={!answer} onClick={()=>submit(place.circuit)}>Confirmar respuesta</Button></>}
+ {mode==="quiz"&&<><div className="progress">{[0,1,2].map(i=><span key={i} className={i<=question?"filled":""}/>)}</div><div className="panel"><h2>{quiz.question}</h2></div>{options(quiz.options)}<Button disabled={!answer} onClick={()=>submit(quiz.answer)}>{question===2?"Completar trivia":"Siguiente pregunta"}</Button></>}
+ {mode==="story"&&<><div className="panel"><h2>Reconstruí el mensaje</h2><p>Tocá las palabras en orden.</p><div className="story-slots">{[0,1,2].map((n)=><span key={n}>{pieces[n]===undefined?String(n+1).padStart(2,"0"):story[pieces[n]]}</span>)}</div></div><div className="options">{[2,0,1].filter(n=>!pieces.includes(n)).map(n=><button key={n} className="answer" onClick={()=>{setPieces(p=>[...p,n]);setFeedback("")}}>{story[n]}</button>)}</div><Button disabled={pieces.length!==3} onClick={()=>pieces.join(",")==="0,1,2"?go("success"):setFeedback("El orden no es correcto. Reiniciá y probá de nuevo.")}>Continuar</Button><Button secondary onClick={()=>{setPieces([]);setFeedback("")}}>Reiniciar</Button></>}
+ {mode==="detective"&&<><div className="panel"><span className="kicker">TU OBJETIVO</span><h2>{place.name}</h2><p>Identificá el lugar entre estas pistas.</p></div>{options(detective.map(p=>codeLabel(p.code)+" · "+p.name))}<Button disabled={!answer} onClick={()=>submit(codeLabel(place.code)+" · "+place.name)}>Confirmar elección</Button></>}
+ {feedback&&<p className="feedback" role="status">{feedback}</p>}</>}
+ {screen==="success"&&<><Back onClick={()=>go("games")}>Juegos</Back><Head kicker={place.name.toUpperCase()} title="Desafío superado"/><div className="game-object"><img src={badgeAsset(place.circuit)} alt="Medalla de la aventura" /></div><h2>¡Lo conseguiste!</h2><p className="body-copy">Descubriste una nueva pista. Guardá tu hallazgo en el pasaporte.</p><Button disabled={!ready} onClick={finish}>{completed?"Finalizar":"Conseguir mi sello"}</Button></>}
+ {screen==="reward"&&<><Head kicker="AVENTURA FINALIZADA" title={newPoints?"¡Un nuevo sello!":"¡Desafío completado!"} sub={place.name}/><div className="reward-object"><img src={badgeAsset(place.circuit)} alt={"Medalla del circuito "+place.circuit}/><span>{codeLabel(place.code)} · CIRCUITO {place.circuit.toUpperCase()}</span></div><div className="pills"><Pill>+{newPoints} puntos</Pill><Pill>{newPoints?"Sello guardado":"Ya conseguido"}</Pill></div><h2>{newPoints?"¡Lo conseguiste!":"Ya habías completado este juego"}</h2><p className="body-copy">{newPoints?"Tu hallazgo ya está en el pasaporte.":"Podés jugar sin duplicar puntos."}</p><Button onClick={()=>go("passport")}>Ver mi pasaporte</Button><Button secondary onClick={()=>go("games")}>Otro juego en este lugar</Button></>}
+ {screen==="passport"&&<><div className="adventure-heading"><span className="kicker">TU COLECCIÓN</span><h1>Mi pasaporte</h1><p>{foundPlaces.length} / 26 sellos · {points} puntos</p></div><div className="album-book" aria-label="Pasaporte abierto"><div className="album-spread">{[0,1].map(col=><div className="album-leaf" key={col}>{[0,1].map(row=>{const p=places[albumPage*4+col*2+row];if(!p)return <div className="album-empty" key={row}/>;const won=foundPlaces.some(x=>x.code===p.code);return <button key={p.code} className={"album-slot "+(won?"won":"locked")} onClick={()=>select(p)} aria-label={p.name+(won?", sello conseguido":", por descubrir")}><span className="album-medal">{won?<img src={badgeAsset(p.circuit)} alt=""/>:<span className="stamp-imprint"><Icon name={p.circuit==="Histórico"?"train":"hill"} size={32}/><span className="stamp-lock"><Icon name="lock" size={13}/></span></span>}</span><strong>{codeLabel(p.code)} · {won?p.name:"Por descubrir"}</strong></button>})}</div>)}</div></div><div className="album-controls"><button aria-label="Página anterior" disabled={albumPage===0} onClick={()=>setAlbumPage(p=>p-1)}><Icon name="back"/></button><span>Página {albumPage+1} / {Math.ceil(places.length/4)}</span><button aria-label="Página siguiente" disabled={albumPage>=Math.ceil(places.length/4)-1} onClick={()=>setAlbumPage(p=>p+1)}><Icon name="arrow"/></button></div><div className="album-legend"><span>Histórico {foundPlaces.filter(p=>p.circuit==="Histórico").length}/16</span><span>Aventura {foundPlaces.filter(p=>p.circuit==="Aventura").length}/10</span></div><p className="note">Sellos y puntos de prueba. No habilitan premios reales.</p></>}
+ {screen==="events"&&<><div className="adventure-heading"><span className="kicker">CULTURA VIVA</span><h1>Eventos especiales</h1><p>La aventura continúa</p></div><div className="section-object event-object"><img src={ART+"eventos.png"} alt="Entradas de teatro con cortina y estrella dorada"/></div><div className="event-ticket"><span className="ticket-dot">✦</span><h2>Próximas activaciones</h2><p>Cuando haya una actividad confirmada, aparecerá acá.</p><small>Sin eventos confirmados por ahora.</small></div><Button onClick={()=>go("places")}>Explorar otras aventuras</Button></>}
+ {screen==="tourism"&&<><div className="adventure-heading"><span className="kicker">CONOCÉ LA LOCALIDAD</span><h1>Prepará tu aventura</h1><p>Información turística</p></div><div className="section-object tourism-object"><img src={ART+"turismo.png"} alt="Mochila de explorador con brújula y mapa"/></div><h2 className="section-caption">Espacios culturales</h2><div className="route-trail">{row(places[0],"Espacio cultural")}{["Centro Cultural Sierras Bayas","Escuela de Cerámica"].map(name=><div className="place-row static-row" key={name}><span className="code mint"><Icon name="book"/></span><span className="row-text"><strong>{name}</strong><small>Espacio cultural</small></span></div>)}</div><div className="event-ticket"><h2>Servicios al visitante</h2><p>Horarios, direcciones, servicios y teléfonos pendientes de verificación.</p></div><Button onClick={()=>chooseCircuit("Todos")}>Ver circuitos</Button></>}
+ </main><nav className="bottom-nav" aria-label="Secciones">{navs.map(n=><button key={n.id} onClick={()=>go(n.id)} className={active===n.id?"active":""} aria-current={active===n.id?"page":undefined}><Icon name={n.icon}/><span>{n.label}</span></button>)}</nav></>}
+ </div></div>
 }
