@@ -123,3 +123,18 @@
 .screen-play .panel h2{font-size:21px;line-height:1.3}
 .screen-play .answer{min-height:60px}
 @media(prefers-reduced-motion:reduce){.section-object img,.screen-play .challenge-object{animation:none}}
+
+/* TRAMO 12 — cromos con identidad patrimonial */
+.cromo-pending{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;aspect-ratio:1;width:min(58vw,210px);max-width:100%;border:3px double #d2af62;border-radius:50%;background:radial-gradient(#cfaa6155,#1f3c2b);color:#ffe4a0;box-shadow:inset 0 0 0 7px #b98d3b33,0 6px 10px #172a20}
+.cromo-pending b{font-size:26px}
+.album-medal .cromo-pending{width:80%;height:auto;box-shadow:none;border:2px double #9c6c36;background:#ad7b3427;color:#8b5b2f}
+.album-medal .cromo-pending svg{width:18px;height:18px}.album-medal .cromo-pending b{font-size:13px}
+.cromo-note{background:linear-gradient(120deg,#f8dfae,#edc487);border:1px solid #d6a35d;color:#573915;padding:14px 16px;border-radius:16px 9px 16px 9px;display:flex;flex-direction:column;gap:7px;box-shadow:0 4px 9px #18251c80}
+.cromo-note strong{font-size:15px}.cromo-note p{font-size:13px;line-height:1.45}.cromo-note a{color:#643713;font-size:12px;font-weight:800;text-decoration:underline}.cromo-note small{font-size:10px;opacity:.78}
+.album-spread{animation:turn-leaf .36s cubic-bezier(.15,.65,.35,1);transform-origin:center center}
+@keyframes turn-leaf{from{opacity:0;transform:perspective(500px) rotateY(-12deg) scaleX(.96)}to{opacity:1;transform:none}}
+.achievement-trail{display:flex;flex-direction:column;gap:8px}
+.achievement-trail h2{font-size:18px;color:#fff0cd;text-shadow:0 2px 3px #16231b}
+.achievement{display:flex;gap:9px;align-items:center;color:#e7d7b3;background:#142c23ce;border:1px solid #a67a3d55;border-radius:22px;padding:10px 12px}.achievement span{flex:1;font-weight:750;font-size:13px}.achievement small{font-size:10px}.achievement.achieved{color:#ffe5a2;border-color:#d6ad5a;background:#5d462bdc}.achievement.achieved svg{fill:#f4c96c}
+.audio-toggle{display:flex;align-items:center;justify-content:center;gap:7px;align-self:center;background:none;color:#ffe2a1;font-size:12px;padding:8px 12px;border:1px solid #b48d4f66;border-radius:20px}
+@media(prefers-reduced-motion:reduce){.album-spread{animation:none}}
