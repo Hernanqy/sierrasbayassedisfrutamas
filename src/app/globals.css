@@ -138,3 +138,122 @@
 .achievement{display:flex;gap:9px;align-items:center;color:#e7d7b3;background:#142c23ce;border:1px solid #a67a3d55;border-radius:22px;padding:10px 12px}.achievement span{flex:1;font-weight:750;font-size:13px}.achievement small{font-size:10px}.achievement.achieved{color:#ffe5a2;border-color:#d6ad5a;background:#5d462bdc}.achievement.achieved svg{fill:#f4c96c}
 .audio-toggle{display:flex;align-items:center;justify-content:center;gap:7px;align-self:center;background:none;color:#ffe2a1;font-size:12px;padding:8px 12px;border:1px solid #b48d4f66;border-radius:20px}
 @media(prefers-reduced-motion:reduce){.album-spread{animation:none}}
+
+/* TRAMO 13 — fondos de color por pantalla. La bienvenida queda intacta. */
+.phone-shell:not(.landing-shell){
+ --theme-top:#ef7cda;--theme-mid:#f7b6e8;--theme-bottom:#fff5fb;--theme-deep:#7e175f;--theme-ink:#201025;
+ background-color:var(--theme-bottom);
+ background-image:linear-gradient(180deg,var(--theme-top) 0%,var(--theme-mid) 48%,var(--theme-bottom) 100%);
+ background-repeat:no-repeat;background-position:center top;background-size:100% max(100dvh,850px);
+ color:var(--theme-ink);
+}
+.phone-shell:is([data-screen="places"],[data-screen="map"],[data-screen="host"]),
+.phone-shell:is([data-screen="intro"],[data-screen="play"])[data-mode="story"]{
+ --theme-top:#bdff58;--theme-mid:#dcfba5;--theme-bottom:#f8fff0;--theme-deep:#385f13;--theme-ink:#152610;
+}
+.phone-shell:is([data-screen="tourism"]),
+.phone-shell:is([data-screen="intro"],[data-screen="play"])[data-mode="quiz"]{
+ --theme-top:#62b5ff;--theme-mid:#adddff;--theme-bottom:#f1fbff;--theme-deep:#165a91;--theme-ink:#10253b;
+}
+.phone-shell:is([data-screen="passport"],[data-screen="success"],[data-screen="reward"]),
+.phone-shell:is([data-screen="intro"],[data-screen="play"])[data-mode="detective"]{
+ --theme-top:#b591f9;--theme-mid:#d9c6ff;--theme-bottom:#f9f4ff;--theme-deep:#60329c;--theme-ink:#231339;
+}
+.phone-shell:not(.landing-shell) .topbar{background:transparent;color:var(--theme-ink)}
+.phone-shell:not(.landing-shell) .brand,
+.phone-shell:not(.landing-shell) .headline h1,
+.phone-shell:not(.landing-shell) .adventure-heading h1{color:var(--theme-ink);text-shadow:none}
+.phone-shell:not(.landing-shell) .headline p,.phone-shell:not(.landing-shell) .body-copy,
+.phone-shell:not(.landing-shell) .note,.phone-shell:not(.landing-shell) .kicker,
+.phone-shell:not(.landing-shell) .adventure-heading p{color:var(--theme-ink);text-shadow:none}
+.phone-shell:not(.landing-shell) .kicker{opacity:.82}
+.phone-shell:not(.landing-shell) .score{background:rgba(255,255,255,.76);color:var(--theme-ink);border:0;box-shadow:0 4px 12px #28203b13}
+.phone-shell:not(.landing-shell) .location{background:rgba(255,255,255,.74);color:var(--theme-ink);border:0}
+.phone-shell:not(.landing-shell) .location button{color:var(--theme-deep)}
+.phone-shell:not(.landing-shell) .floating-game,.phone-shell:not(.landing-shell) .passport-link,
+.phone-shell:not(.landing-shell) .route-object{color:var(--theme-ink)}
+.phone-shell:not(.landing-shell) :is(.floating-game strong,.passport-link strong,.route-object strong){
+ background:#251c2d;color:white;border:0;box-shadow:0 3px 8px #28203b25;border-radius:24px;
+}
+.phone-shell:not(.landing-shell) :is(.floating-game span,.passport-link small,.route-object small,.route-filter-label){
+ color:var(--theme-ink);text-shadow:none;
+}
+.phone-shell:not(.landing-shell) :is(.floating-game img,.game-object img,.passport-link img,.route-object img,.challenge-object,.section-object img,.place-diorama img){
+ filter:drop-shadow(0 7px 7px #28203b35);
+}
+.phone-shell:not(.landing-shell) .route-object.selected strong{background:var(--theme-deep);color:#fff}
+.phone-shell:not(.landing-shell) .btn{background:var(--theme-ink);color:white;box-shadow:0 4px 12px #29213e25;border:0}
+.phone-shell:not(.landing-shell) .btn.secondary{background:#ffffffa8;color:var(--theme-ink);border:1px solid #ffffffd9;box-shadow:none}
+.phone-shell:not(.landing-shell) .back,.phone-shell:not(.landing-shell) .text-link{color:var(--theme-deep)}
+.phone-shell:not(.landing-shell) .panel{background:#ffffffd9;color:var(--theme-ink);box-shadow:0 4px 12px #29213e17;border:1px solid #ffffffd0}
+.phone-shell:not(.landing-shell) .panel p,.phone-shell:not(.landing-shell) .panel .kicker{color:var(--theme-ink)}
+.phone-shell:not(.landing-shell) .answer{background:#ffffffdc;color:var(--theme-ink);border:2px solid transparent;box-shadow:0 3px 9px #29213e10}
+.phone-shell:not(.landing-shell) .answer>span{background:var(--theme-mid);color:var(--theme-ink)}
+.phone-shell:not(.landing-shell) .answer.chosen{border-color:var(--theme-deep);background:#fff}
+.phone-shell:not(.landing-shell) .feedback{background:#fff1f1;color:#8c243e}
+.phone-shell:not(.landing-shell) .pill,.phone-shell:not(.landing-shell) .filters button{background:#ffffffc9;color:var(--theme-ink);border:0}
+.phone-shell:not(.landing-shell) .filters button.active{background:var(--theme-ink);color:white}
+.phone-shell:not(.landing-shell) .search{background:#ffffffd9;color:var(--theme-ink)}
+.phone-shell:not(.landing-shell) .search input::placeholder{color:#61576b}
+.phone-shell:not(.landing-shell) .place-row{background:#ffffffd9;color:var(--theme-ink);border:0;box-shadow:none}
+.phone-shell:not(.landing-shell) .route-trail .place-row{background:linear-gradient(90deg,transparent 0 70px,#ffffffc9 70px)}
+.phone-shell:not(.landing-shell) .route-trail:before{border-color:var(--theme-deep)}
+.phone-shell:not(.landing-shell) .row-text small{color:var(--theme-ink);opacity:.75}
+.phone-shell:not(.landing-shell) .route-trail .row-text strong{text-shadow:none}
+.phone-shell:not(.landing-shell) .map-link{background:#ffffffd9;color:var(--theme-ink);border:0;box-shadow:0 4px 12px #29213e17}
+.phone-shell:not(.landing-shell) :is(.album-controls,.album-controls span,.album-legend,.section-caption,.achievement-trail h2,.reward-object span){
+ color:var(--theme-ink);text-shadow:none;
+}
+.phone-shell:not(.landing-shell) .album-controls button{background:var(--theme-ink);color:white;border:0}
+.phone-shell:not(.landing-shell) .achievement{background:#ffffffd2;color:var(--theme-ink);border:0}
+.phone-shell:not(.landing-shell) .achievement.achieved{background:var(--theme-ink);color:#fff}
+.phone-shell:not(.landing-shell) .audio-toggle{color:var(--theme-ink);background:#ffffffb3;border:0}
+.phone-shell:not(.landing-shell) .bottom-nav{background:#ffffffed;color:var(--theme-ink);border:0;box-shadow:0 5px 22px #29213e1f}
+.phone-shell:not(.landing-shell) .bottom-nav button.active{color:var(--theme-deep)}
+.phone-shell:not(.landing-shell) .bottom-nav button.active:before{background:var(--theme-deep)}
+
+/* TRAMO 14 — el lugar como protagonista, sin casillero */
+.screen-games .current-place{display:flex;flex-direction:column;align-items:center;gap:6px;padding:8px 2px 0;text-align:center;color:var(--theme-ink)}
+.current-place-eyebrow{display:flex;align-items:center;justify-content:center;gap:5px;font-size:14px;font-weight:750;line-height:1.3;opacity:.85}
+.current-place h1{font-size:clamp(27px,7.6vw,36px);font-weight:900;letter-spacing:-.8px;line-height:1.12;max-width:100%;overflow-wrap:anywhere}
+.current-place-actions{display:flex;align-items:center;justify-content:center;gap:15px}
+.current-place-actions button{display:flex;align-items:center;gap:5px;background:none;color:var(--theme-deep);min-height:32px;padding:5px 0;font-weight:800;font-size:12px}
+.game-selection-heading{text-align:center;padding-top:4px}
+.game-selection-heading h2{font-size:clamp(21px,5.7vw,26px);font-weight:850;line-height:1.2;letter-spacing:-.35px;color:var(--theme-ink)}
+.screen-games .floating-games{padding-top:6px}
+
+/* TRAMO 15 — pantalla de tesoro más directa y pista con estilo de juego */
+.phone-shell[data-screen="play"][data-mode="treasure"] .screen-play{gap:11px}
+.phone-shell[data-screen="play"][data-mode="treasure"] .game-head{padding:0;margin-top:-5px}
+.phone-shell[data-screen="play"][data-mode="treasure"] .challenge-object{width:106px;height:106px}
+.treasure-challenge{display:flex;flex-direction:column;gap:13px}
+.phone-shell:not(.landing-shell) .screen-play .treasure-clue{
+ position:relative;isolation:isolate;overflow:hidden;display:flex;align-items:center;
+ flex-direction:column;gap:9px;padding:23px 17px 22px;border:1px solid #ffffffec;
+ background:linear-gradient(145deg,#fffdfc 12%,#fff3fa 62%,#f5d6ee);
+ border-radius:29px 14px 29px 14px;
+ box-shadow:0 4px 0 #a33b8844,0 12px 24px #86235d24;
+}
+.treasure-clue:before,.treasure-clue:after{content:"";position:absolute;z-index:-1;pointer-events:none}
+.treasure-clue:before{width:110px;height:110px;border:1px solid #de83c34d;border-radius:50%;right:-45px;top:-51px;box-shadow:0 0 0 11px #eaa0d421,0 0 0 22px #eaa0d412}
+.treasure-clue:after{width:86px;height:86px;border:1px solid #de83c34d;border-radius:50%;left:-41px;bottom:-46px;box-shadow:0 0 0 10px #eaa0d421,0 0 0 20px #eaa0d412}
+.phone-shell:not(.landing-shell) .treasure-clue .treasure-clue-number{display:inline-block;color:#84235e;background:#f5c7e8;padding:5px 12px;border-radius:20px;letter-spacing:.7px;font-size:11px;font-weight:900}
+.phone-shell:not(.landing-shell) .treasure-clue h2{font-size:21px;line-height:1.22;letter-spacing:-.4px}
+.phone-shell:not(.landing-shell) .treasure-clue p{font-size:15px;font-weight:700;line-height:1.4}
+.treasure-challenge>h2{font-size:19px;font-weight:850;line-height:1.25}
+.treasure-challenge .text-link{min-height:39px;padding:4px 2px}
+.phone-shell:not(.landing-shell) .treasure-challenge .answer{min-height:55px;border-radius:19px 28px 28px 19px;border:1px solid #ffffffcf;background:#fff9fde8;box-shadow:0 3px 0 #af4c901b}
+.phone-shell:not(.landing-shell) .treasure-challenge .answer.chosen{background:#fff;border:2px solid #8d2e6e;box-shadow:0 3px 0 #8d2e6e40}
+.phone-shell:not(.landing-shell) .treasure-challenge .answer>span{background:linear-gradient(#f3c5e9,#e6a1d7)}
+.phone-shell:not(.landing-shell) .treasure-challenge .btn{min-height:50px;box-shadow:0 4px 0 #26102c25}
+
+/* TRAMO 16 — cartografía real, accesible y sin puntos inventados */
+.real-map-icon{display:grid;place-items:center;width:49px;height:49px;border-radius:17px;background:var(--theme-mid);color:var(--theme-deep);flex:none}
+.phone-shell:not(.landing-shell) .map-link .real-map-icon{flex:none;text-align:center}
+.real-map-frame{width:100%;background:#fff;border:3px solid #ffffffdf;border-radius:24px;overflow:hidden;box-shadow:0 10px 25px #22382026}
+.real-map-frame iframe{display:block;width:100%;height:clamp(360px,53dvh,510px);border:0;background:#e8eadf}
+.real-map-credit{padding:5px 9px;text-align:right;font-size:10px;color:#384d35;background:#fff}
+.real-map-credit a{text-decoration:underline}
+.real-map-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.real-map-actions a{display:flex;align-items:center;justify-content:center;gap:6px;min-height:46px;padding:8px;background:var(--theme-ink);color:#fff;text-decoration:none;border-radius:23px;font-size:12px;font-weight:800;text-align:center}
+.real-map-actions a:first-child{background:#ffffffd9;color:var(--theme-ink)}
