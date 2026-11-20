@@ -1,0 +1,453 @@
+﻿"use client";
+
+import { useEffect, useState } from "react";
+import {
+  ArrowLeft, ArrowRight, Award, BookOpen, CalendarDays,
+  Camera, CheckCircle2, ChevronRight, Clock3, Compass,
+  Flag, Gift, Heart, Info, KeyRound, LockKeyhole,
+  Map, MapPin, Menu, Mountain, Navigation, Search,
+  Sparkles, Star, Trophy, UtensilsCrossed, X
+} from "lucide-react";
+
+type Vista = "inicio" | "aventura" | "misiones" | "coleccion" | "eventos" | "turismo";
+type Icono = typeof MapPin;
+
+const lugares = [
+  {
+    id: 1,
+    nombre: "La estación",
+    categoria: "Patrimonio ferroviario",
+    detalle: "Descubrí las huellas del ferrocarril y su importancia en la historia de la localidad.",
+    pista: "Hubo un tiempo en que los viajes y las noticias llegaban sobre rieles.",
+    icono: Navigation,
+    color: "naranja",
+    puntos: 100
+  },
+  {
+    id: 2,
+    nombre: "Historia minera",
+    categoria: "Patrimonio industrial",
+    detalle: "Conocé cómo la actividad minera fue transformando el paisaje y la vida cotidiana.",
+    pista: "La piedra guarda las marcas del trabajo de muchas generaciones.",
+    icono: Mountain,
+    color: "violeta",
+    puntos: 100
+  },
+  {
+    id: 3,
+    nombre: "Las canteras",
+    categoria: "Paisaje e historia",
+    detalle: "Explorá la relación entre las canteras, el territorio y la identidad local.",
+    pista: "Las montañas también cuentan historias sobre el trabajo y el tiempo.",
+    icono: Compass,
+    color: "rosa",
+    puntos: 100
+  },
+  {
+    id: 4,
+    nombre: "Espacios culturales",
+    categoria: "Arte y comunidad",
+    detalle: "Descubrí las propuestas culturales y los lugares donde la comunidad se encuentra.",
+    pista: "Las historias siguen vivas donde las personas se reúnen a crear.",
+    icono: BookOpen,
+    color: "verde",
+    puntos: 100
+  },
+  {
+    id: 5,
+    nombre: "Naturaleza serrana",
+    categoria: "Paisaje natural",
+    detalle: "Observá el paisaje y reconocé los elementos naturales de Sierras Bayas.",
+    pista: "Mirá a tu alrededor: el paisaje es una parte de la respuesta.",
+    icono: Mountain,
+    color: "naranja",
+    puntos: 100
+  }
+];
+
+const eventos = [
+  {
+    titulo: "Circuito de fin de semana",
+    tipo: "Próximamente",
+    texto: "Una aventura especial para recorrer la localidad y descubrir nuevos desafíos.",
+    icono: Compass
+  },
+  {
+    titulo: "Historias que aparecen",
+    tipo: "Próximamente",
+    texto: "Misiones temporales relacionadas con propuestas culturales y patrimoniales.",
+    icono: Sparkles
+  },
+  {
+    titulo: "Desafío comunitario",
+    tipo: "Próximamente",
+    texto: "Actividades grupales y recompensas de edición limitada.",
+    icono: Trophy
+  }
+];
+
+function Marca({ compacta = false }: { compacta?: boolean }) {
+  return (
+    <div className={"marca " + (compacta ? "marca-compacta" : "")}>
+      <div className="marca-nombre">Sierras<br /><span>Bayas</span></div>
+      <div className="marca-lema">SE DISFRUTA MÁS</div>
+    </div>
+  );
+}
+
+function BotonIcono({
+  icono: Icon,
+  titulo,
+  detalle,
+  color,
+  onClick
+}: {
+  icono: Icono;
+  titulo: string;
+  detalle: string;
+  color: string;
+  onClick: () => void;
+}) {
+  return (
+    <button className={"acceso acceso-" + color} onClick={onClick}>
+      <span className="acceso-icono"><Icon size={32} strokeWidth={2.1} /></span>
+      <strong>{titulo}</strong>
+      <small>{detalle}</small>
+      <ArrowRight className="acceso-flecha" size={18} />
+    </button>
+  );
+}
+
+export default function Home() {
+  const [vista, setVista] = useState<Vista>("inicio");
+  const [menu, setMenu] = useState(false);
+  const [seleccionado, setSeleccionado] = useState<number | null>(null);
+  const [completados, setCompletados] = useState<number[]>([]);
+  const [cargado, setCargado] = useState(false);
+  const [busqueda, setBusqueda] = useState("");
+
+  useEffect(() => {
+    try {
+      const guardado = localStorage.getItem("sb-aventura-progreso");
+      if (guardado) {
+        const datos = JSON.parse(guardado);
+        if (Array.isArray(datos)) {
+          setCompletados(datos.filter((n): n is number => typeof n === "number"));
+        }
+      }
+    } catch {}
+    setCargado(true);
+  }, []);
+
+  useEffect(() => {
+    if (cargado) {
+      localStorage.setItem("sb-aventura-progreso", JSON.stringify(completados));
+    }
+  }, [completados, cargado]);
+
+  const puntos = completados.length * 100;
+  const lugar = lugares.find((l) => l.id === seleccionado);
+
+  function ir(destino: Vista) {
+    setVista(destino);
+    setMenu(false);
+    setSeleccionado(null);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function completar(id: number) {
+    setCompletados((actual) =>
+      actual.includes(id) ? actual : [...actual, id]
+    );
+  }
+
+  const navegacion: { nombre: string; vista: Vista; icono: Icono }[] = [
+    { nombre: "Inicio", vista: "inicio", icono: Compass },
+    { nombre: "Aventura", vista: "aventura", icono: Map },
+    { nombre: "Misiones", vista: "misiones", icono: KeyRound },
+    { nombre: "Colección", vista: "coleccion", icono: Trophy },
+    { nombre: "Eventos", vista: "eventos", icono: CalendarDays },
+    { nombre: "Turismo", vista: "turismo", icono: Info }
+  ];
+
+  return (
+    <div className="aplicacion">
+      <header className="cabecera">
+        <button className="logo-mini" onClick={() => ir("inicio")}>
+          <span>Sierras Bayas</span>
+          <small>SE DISFRUTA MÁS</small>
+        </button>
+
+        <div className="cabecera-derecha">
+          <span className="puntos-cabecera"><Star size={16} fill="currentColor" /> {puntos}</span>
+          <button className="boton-menu" onClick={() => setMenu(!menu)} aria-label="Abrir menú">
+            {menu ? <X /> : <Menu />}
+          </button>
+        </div>
+      </header>
+
+      {menu && (
+        <nav className="menu-desplegable">
+          {navegacion.map(({ nombre, vista: destino, icono: Icon }) => (
+            <button key={destino} onClick={() => ir(destino)}>
+              <Icon size={19} /> {nombre} <ChevronRight size={16} />
+            </button>
+          ))}
+        </nav>
+      )}
+
+      {vista === "inicio" && (
+        <>
+          <section className="hero">
+            <div className="sol" />
+            <Marca />
+            <div className="paisaje">
+              <Mountain size={72} />
+              <div className="paisaje-casa"><span>▥</span><span>▣</span><span>▥</span></div>
+              <Mountain size={62} />
+            </div>
+            <div className="hero-texto">
+              <span className="etiqueta-hero"><Sparkles size={15} /> UNA AVENTURA REAL</span>
+              <h1>¡Comenzá tu aventura!</h1>
+              <p>Explorá, jugá y descubrí las historias de Sierras Bayas.</p>
+            </div>
+          </section>
+
+          <main className="contenido inicio-contenido">
+            <div className="seccion-titulo">
+              <div>
+                <span className="sobrelinea">TU PRÓXIMA EXPERIENCIA</span>
+                <h2>¿Qué te gustaría hacer?</h2>
+              </div>
+            </div>
+
+            <div className="accesos">
+              <BotonIcono icono={Map} titulo="Jugar aventura" detalle="Recorré y descubrí pistas" color="naranja" onClick={() => ir("aventura")} />
+              <BotonIcono icono={KeyRound} titulo="Misiones especiales" detalle="Nuevos desafíos" color="violeta" onClick={() => ir("misiones")} />
+              <BotonIcono icono={Trophy} titulo="Mi colección" detalle="Guardá tus hallazgos" color="verde" onClick={() => ir("coleccion")} />
+              <BotonIcono icono={CalendarDays} titulo="Eventos en juego" detalle="Experiencias temporales" color="rosa" onClick={() => ir("eventos")} />
+            </div>
+
+            <button className="tarjeta-turismo" onClick={() => ir("turismo")}>
+              <span className="icono-turismo"><MapPin size={26} /></span>
+              <span><strong>Conocé Sierras Bayas</strong><small>Lugares, recorridos e información para tu visita</small></span>
+              <ChevronRight />
+            </button>
+
+            <section className="progreso">
+              <div className="progreso-superior">
+                <span className="progreso-icono"><Award size={25} /></span>
+                <div><strong>Tu aventura</strong><small>{completados.length} de {lugares.length} lugares descubiertos</small></div>
+                <b>{puntos} pts</b>
+              </div>
+              <div className="barra"><span style={{ width: `${completados.length / lugares.length * 100}%` }} /></div>
+              <button onClick={() => ir("aventura")}>Continuar explorando <ArrowRight size={16} /></button>
+            </section>
+          </main>
+        </>
+      )}
+
+      {vista !== "inicio" && (
+        <main className="contenido vista-interna">
+          <button className="volver" onClick={() => seleccionado ? setSeleccionado(null) : ir("inicio")}>
+            <ArrowLeft size={19} /> Volver
+          </button>
+
+          {vista === "aventura" && (
+            <>
+              <div className="encabezado-seccion">
+                <span className="sobrelinea">EXPLORACIÓN · SIERRAS BAYAS</span>
+                <h1>{lugar ? lugar.nombre : "Tu aventura comienza acá"}</h1>
+                <p>{lugar ? lugar.categoria : "Cada parada es una oportunidad para descubrir una nueva historia."}</p>
+              </div>
+
+              {!lugar ? (
+                <>
+                  <div className="resumen-aventura">
+                    <div className="resumen-icono"><Compass size={46} /></div>
+                    <div><strong>El recorrido de los hallazgos</strong><p>5 paradas · 500 puntos posibles</p></div>
+                    <div className="barra"><span style={{ width: `${completados.length * 20}%` }} /></div>
+                    <small>{completados.length} de 5 descubiertos</small>
+                  </div>
+
+                  <h2 className="subtitulo">Paradas de la aventura</h2>
+                  <div className="lista-lugares">
+                    {lugares.map((l, i) => {
+                      const Icon = l.icono;
+                      const hecho = completados.includes(l.id);
+                      return (
+                        <button className="lugar-card" key={l.id} onClick={() => setSeleccionado(l.id)}>
+                          <span className={"lugar-icono fondo-" + l.color}><Icon size={25} /></span>
+                          <span className="lugar-info">
+                            <small>PARADA {i + 1}</small>
+                            <strong>{l.nombre}</strong>
+                            <span>{l.categoria}</span>
+                          </span>
+                          {hecho ? <CheckCircle2 color="#169b62" /> : <ChevronRight />}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </>
+              ) : (
+                <div className="detalle-lugar">
+                  <div className={"detalle-ilustracion fondo-" + lugar.color}>
+                    <lugar.icono size={85} strokeWidth={1.4} />
+                    <span>PARADA {lugar.id}</span>
+                  </div>
+                  <div className="detalle-cuerpo">
+                    <span className="sobrelinea">DESCUBRIMIENTO</span>
+                    <h2>La historia del lugar</h2>
+                    <p>{lugar.detalle}</p>
+
+                    <div className="pista">
+                      <KeyRound size={23} />
+                      <div><strong>Tu pista</strong><p>{lugar.pista}</p></div>
+                    </div>
+
+                    <div className="aviso-prototipo">
+                      <Info size={19} />
+                      <span>Versión de prueba: todavía no verificamos tu ubicación. Los lugares y desafíos son contenidos demostrativos.</span>
+                    </div>
+
+                    <button className="boton-principal" disabled={completados.includes(lugar.id)} onClick={() => completar(lugar.id)}>
+                      {completados.includes(lugar.id) ? <><CheckCircle2 /> Hallazgo registrado</> : <><Star /> Registrar hallazgo · +100 puntos</>}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+
+          {vista === "misiones" && (
+            <>
+              <div className="encabezado-seccion">
+                <span className="sobrelinea">PISTAS Y DESAFÍOS</span>
+                <h1>Misiones especiales</h1>
+                <p>Descubrí experiencias que se activan durante recorridos y fechas especiales.</p>
+              </div>
+              <div className="tarjeta-destacada">
+                <span><KeyRound size={35} /></span>
+                <strong>Tu primera misión</strong>
+                <h2>Las huellas del tiempo</h2>
+                <p>Explorá cinco aspectos de la identidad de Sierras Bayas y completá tu colección.</p>
+                <button onClick={() => ir("aventura")}>Comenzar misión <ArrowRight size={18} /></button>
+              </div>
+              <h2 className="subtitulo">Próximas misiones</h2>
+              <div className="lista-lugares">
+                {["El secreto de las piedras", "Historias sobre rieles", "Un desafío para compartir"].map((m) => (
+                  <div className="lugar-card deshabilitada" key={m}>
+                    <span className="lugar-icono fondo-violeta"><LockKeyhole /></span>
+                    <span className="lugar-info"><strong>{m}</strong><span>Próximamente</span></span>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+
+          {vista === "coleccion" && (
+            <>
+              <div className="encabezado-seccion">
+                <span className="sobrelinea">TUS DESCUBRIMIENTOS</span>
+                <h1>Mi colección</h1>
+                <p>Los recuerdos digitales de tu aventura.</p>
+              </div>
+              <div className="coleccion-resumen">
+                <Trophy size={39} />
+                <strong>{completados.length} / {lugares.length}</strong>
+                <span>Hallazgos descubiertos</span>
+                <div className="barra"><span style={{ width: `${completados.length * 20}%` }} /></div>
+              </div>
+              <div className="coleccion-grid">
+                {lugares.map((l) => {
+                  const Icon = l.icono;
+                  const desbloqueado = completados.includes(l.id);
+                  return (
+                    <div className={"coleccion-item " + (!desbloqueado ? "bloqueado" : "")} key={l.id}>
+                      <span className={"coleccion-icono fondo-" + l.color}>{desbloqueado ? <Icon size={36} /> : <LockKeyhole size={29} />}</span>
+                      <strong>{desbloqueado ? l.nombre : "Por descubrir"}</strong>
+                      <small>{desbloqueado ? "Hallazgo registrado" : "Hallazgo bloqueado"}</small>
+                    </div>
+                  );
+                })}
+              </div>
+              <button className="boton-principal separado" onClick={() => ir("aventura")}>Explorar más lugares <ArrowRight /></button>
+            </>
+          )}
+
+          {vista === "eventos" && (
+            <>
+              <div className="encabezado-seccion">
+                <span className="sobrelinea">AGENDA Y AVENTURAS</span>
+                <h1>Eventos en juego</h1>
+                <p>La aventura cambia cuando Sierras Bayas celebra, crea y se encuentra.</p>
+              </div>
+              <div className="aviso-prototipo"><CalendarDays size={19} /><span>Ejemplos de posibles activaciones. Las fechas reales se incorporarán cuando tengamos la agenda confirmada.</span></div>
+              <div className="lista-eventos">
+                {eventos.map((e, i) => {
+                  const Icon = e.icono;
+                  return (
+                    <article className="evento-card" key={i}>
+                      <div className={"evento-icono fondo-" + ["naranja", "violeta", "rosa"][i]}><Icon size={30} /></div>
+                      <div><span className="etiqueta-evento">{e.tipo}</span><h2>{e.titulo}</h2><p>{e.texto}</p></div>
+                    </article>
+                  );
+                })}
+              </div>
+            </>
+          )}
+
+          {vista === "turismo" && (
+            <>
+              <div className="encabezado-seccion">
+                <span className="sobrelinea">TU GUÍA DE VIAJE</span>
+                <h1>Conocé Sierras Bayas</h1>
+                <p>Encontrá lugares y prepará tu visita. No necesitás jugar para consultar información.</p>
+              </div>
+              <div className="buscador"><Search size={20} /><input placeholder="Buscar un atractivo..." value={busqueda} onChange={(e) => setBusqueda(e.target.value)} /></div>
+              <h2 className="subtitulo">Lugares para descubrir</h2>
+              <div className="lista-lugares">
+                {lugares.filter((l) => (l.nombre + " " + l.categoria).toLowerCase().includes(busqueda.toLowerCase())).map((l) => {
+                  const Icon = l.icono;
+                  return (
+                    <div className="lugar-card" key={l.id}>
+                      <span className={"lugar-icono fondo-" + l.color}><Icon /></span>
+                      <span className="lugar-info"><strong>{l.nombre}</strong><span>{l.detalle}</span></span>
+                    </div>
+                  );
+                })}
+              </div>
+              <h2 className="subtitulo">Planificá tu visita</h2>
+              <div className="servicios">
+                <div><UtensilsCrossed /><strong>Gastronomía</strong><small>Próximamente</small></div>
+                <div><MapPin /><strong>Cómo llegar</strong><small>Próximamente</small></div>
+                <div><Clock3 /><strong>Horarios</strong><small>Próximamente</small></div>
+                <div><Heart /><strong>Servicios</strong><small>Próximamente</small></div>
+              </div>
+            </>
+          )}
+        </main>
+      )}
+
+      <footer className="pie">
+        <p>SIERRAS BAYAS · SE DISFRUTA MÁS</p>
+        <small>Prototipo interactivo de experiencia turística</small>
+      </footer>
+
+      <nav className="navegacion-inferior">
+        {[
+          { vista: "inicio" as Vista, icono: Compass, texto: "Inicio" },
+          { vista: "aventura" as Vista, icono: Map, texto: "Aventura" },
+          { vista: "coleccion" as Vista, icono: Trophy, texto: "Colección" },
+          { vista: "eventos" as Vista, icono: CalendarDays, texto: "Eventos" },
+          { vista: "turismo" as Vista, icono: Info, texto: "Turismo" }
+        ].map(({ vista: destino, icono: Icon, texto }) => (
+          <button className={vista === destino ? "activo" : ""} key={destino} onClick={() => ir(destino)}>
+            <Icon size={22} strokeWidth={vista === destino ? 2.6 : 2} />
+            <span>{texto}</span>
+          </button>
+        ))}
+      </nav>
+    </div>
+  );
+}

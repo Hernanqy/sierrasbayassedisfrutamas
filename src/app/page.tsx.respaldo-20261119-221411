@@ -1,0 +1,47 @@
+'use client';
+import { useEffect, useState } from 'react';
+import { ArrowLeft, ArrowRight, Award, BookOpen, Check, ChevronRight, Compass, Gift, Info, Layers, Map, MapPin, Minus, Plus, RotateCcw, Search, ShieldCheck, Star, Trophy, X } from 'lucide-react';
+import { culturales, puntos, servicios, type Circuito, type Punto } from '@/data/sierras';
+import MapaJuego from '@/components/MapaJuego';
+
+type Tab = 'mapa' | 'album' | 'turismo';
+const CLAVE = 'sierras-bayas-progreso-demo-v2';
+const label = (c: Circuito) => c === 'aventura' ? 'Circuito Aventura' : 'Circuito Histórico';
+
+export default function Home() {
+ const [tab,setTab]=useState<Tab>('mapa');
+ const [circuito,setCircuito]=useState<Circuito>('aventura');
+ const [elegido,setElegido]=useState<Punto | null>(null);
+ const [respuesta,setRespuesta]=useState<number|null>(null);
+ const [hechos,setHechos]=useState<string[]>([]);
+ const [cargado,setCargado]=useState(false);
+ const [busqueda,setBusqueda]=useState('');
+ const [zoom,setZoom]=useState(1);
+ const [mostrarFolleto,setMostrarFolleto]=useState(true);
+ useEffect(()=>{try {const s=JSON.parse(localStorage.getItem(CLAVE)||'[]'); if(Array.isArray(s)) setHechos(s.filter((v):v is string=>typeof v==='string'));} catch {} setCargado(true)},[]);
+ useEffect(()=>{if(cargado) localStorage.setItem(CLAVE,JSON.stringify(hechos));},[hechos,cargado]);
+ const visibles=puntos.filter(p=>p.circuito===circuito && p.nombre.toLowerCase().includes(busqueda.toLowerCase()));
+ const puntosGanados=hechos.length*100;
+ const correcto=elegido?.circuito==='aventura'?0:1;
+ function abrir(p:Punto){setElegido(p);setRespuesta(null);}
+ function cerrar(){setElegido(null);setRespuesta(null);}
+ function premio(){if(elegido && respuesta===correcto && !hechos.includes(elegido.id))setHechos(prev=>[...prev,elegido.id]);}
+ return <div className="shell">
+  <header className="topbar"><div className="identity"><span className="brand">Sierras Bayas</span><span className="slogan">SE DISFRUTA MÁS</span></div><div className="points"><Star size={18} fill="currentColor"/>{puntosGanados} pts</div></header>
+  <main>
+   {tab==='mapa' && <>
+    <section className="intro"><div><span className="kicker">AVENTURA TURÍSTICA · SIERRAS BAYAS</span><h1>Explorá. Descubrí. Coleccioná.</h1><p>26 puntos identificados en el folleto turístico: elegí un circuito, tocá un marcador, conocé la parada y jugá para sumar cromos.</p></div><div className="round-icon"><Compass size={44}/></div></section>
+    <div className="switcher" role="group" aria-label="Elegir circuito"><button className={circuito==='aventura'?'selected adventure':''} onClick={()=>{setCircuito('aventura');setBusqueda('');}}>⛰ Circuito Aventura <span>A–J</span></button><button className={circuito==='historico'?'selected history':''} onClick={()=>{setCircuito('historico');setBusqueda('');}}>🏛 Circuito Histórico <span>1–16</span></button></div>
+    <MapaJuego circuito={circuito} hechos={hechos} abrir={abrir}/>
+    <div className="section-heading"><div><span className="kicker">{label(circuito).toUpperCase()}</span><h2>{circuito==='aventura'?'10 lugares para explorar':'16 lugares con historia'}</h2></div><span className="completion">{puntos.filter(p=>p.circuito===circuito&&hechos.includes(p.id)).length} completados</span></div>
+    <div className="search"><Search size={20}/><input value={busqueda} onChange={e=>setBusqueda(e.target.value)} placeholder="Buscar por nombre del lugar"/></div>
+    <div className="stop-grid">{visibles.map(p=><button className="stop" key={p.id} onClick={()=>abrir(p)}><span className={'stop-code '+p.circuito}>{p.codigo}</span><span className="stop-content"><small>{label(p.circuito)}</small><strong>{p.nombre}</strong>{p.observacion&&<em>{p.observacion}</em>}</span>{hechos.includes(p.id)?<Check className="done"/>:<ChevronRight className="chev"/>}</button>)}</div>
+    {!visibles.length&&<p>No se encontraron puntos con ese nombre.</p>}
+   </>}
+   {tab==='album' && <><section className="intro"><div><span className="kicker">TU PASAPORTE DIGITAL</span><h1>Álbum de hallazgos</h1><p>Coleccioná los cromos de las paradas del folleto turístico. En esta versión se obtienen con desafíos de prueba, sin validación presencial.</p></div><div className="round-icon"><Trophy size={42}/></div></section><div className="statrow"><div><strong>{hechos.length}/26</strong><span>Cromos</span></div><div><strong>{puntosGanados}</strong><span>Puntos de prueba</span></div><div><strong>{puntos.filter(p=>p.circuito==='aventura'&&hechos.includes(p.id)).length}/10</strong><span>Aventura</span></div></div><div className="album-grid">{puntos.map(p=><button key={p.id} className={'cromo '+(hechos.includes(p.id)?'earned':'locked')} onClick={()=>{setCircuito(p.circuito);setTab('mapa');abrir(p)}}><span className={'cromo-id '+p.circuito}>{hechos.includes(p.id)?p.codigo:'?'}</span><strong>{hechos.includes(p.id)?p.nombre:'Por descubrir'}</strong><small>{label(p.circuito)}</small>{hechos.includes(p.id)&&<span className="stamp">SELLO</span>}</button>)}</div><div className="notice"><Gift size={22}/><span>Los puntos son de prueba y no pueden canjearse. Para premios reales implementaremos cuentas, verificación presencial y validación de canjes en servidor.</span></div></>}
+   {tab==='turismo' && <><section className="intro"><div><span className="kicker">INFORMACIÓN DEL FOLLETO</span><h1>Tu visita a Sierras Bayas</h1><p>Lugares culturales y servicios indicados en el material turístico aportado. Confirmá horarios y vigencia antes de viajar.</p></div><div className="round-icon"><Info size={42}/></div></section><h2 className="section-title">Espacios culturales</h2><div className="tour-list">{culturales.map(n=><div key={n}><BookOpen size={21}/><strong>{n}</strong></div>)}</div><h2 className="section-title">Servicios y puntos de interés</h2><div className="tour-list">{servicios.map(s=><div key={s.nombre}><MapPin size={21}/><span><strong>{s.nombre}</strong><small>{s.dato}</small></span></div>)}</div><div className="notice"><ShieldCheck size={21}/><span>Estas referencias provienen de un folleto fotografiado, cuya fecha de edición no fue comprobada. La app todavía no confirma horarios, accesibilidad o disponibilidad.</span></div></>}
+  </main>
+  <footer className="nav"><button className={tab==='mapa'?'on':''} onClick={()=>setTab('mapa')}><Map/><span>Mapa y juego</span></button><button className={tab==='album'?'on':''} onClick={()=>setTab('album')}><Layers/><span>Álbum</span></button><button className={tab==='turismo'?'on':''} onClick={()=>setTab('turismo')}><Info/><span>Turismo</span></button></footer>
+  {elegido&&<div className="overlay" onMouseDown={(e)=>{if(e.target===e.currentTarget)cerrar()}}><div className="modal" role="dialog" aria-modal="true" aria-label={`Misión ${elegido.nombre}`}><div className="modal-top"><span className="kicker">MISIÓN DEL {label(elegido.circuito).toUpperCase()} · {elegido.codigo}</span><button onClick={cerrar} aria-label="Cerrar"><X/></button></div><div className={'mission-symbol '+elegido.circuito}><MapPin size={44}/><b>{elegido.codigo}</b></div><h2>{elegido.nombre}</h2>{elegido.observacion&&<p className="fact">{elegido.observacion}</p>}<p>Este lugar figura en el <strong>{label(elegido.circuito)}</strong> del folleto de Sierras Bayas.</p><div className="quiz"><strong>Desafío de reconocimiento</strong><p>¿En qué circuito oficial aparece este lugar?</p>{['Circuito Aventura','Circuito Histórico'].map((op,i)=><button key={op} className={respuesta===i?'answer selected':''} onClick={()=>setRespuesta(i)}>{op}</button>)}{respuesta!==null&&<p className={respuesta===correcto?'success':'error'}>{respuesta===correcto?'¡Correcto! Podés registrar tu cromo.':'Revisá la clasificación del folleto e intentá de nuevo.'}</p>}</div>{hechos.includes(elegido.id)?<div className="reward"><Award/><b>¡Ya tenés este cromo en tu álbum!</b></div>:<button className="primary" onClick={premio} disabled={respuesta!==correcto}><Star size={18}/> Obtener cromo de prueba · +100 pts</button>}<div className="notice"><Info size={19}/><span>Prueba sin geolocalización ni QR: completar esta pregunta no demuestra haber estado físicamente en el lugar.</span></div></div></div>}
+ </div>;
+}
