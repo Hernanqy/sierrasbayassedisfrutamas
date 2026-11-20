@@ -1,0 +1,259 @@
+@import "tailwindcss";
+:root{--ink:#183c35;--cream:#f8f4e9;--green:#487a62;--ochre:#e3ad50;--clay:#ba654a;--pale:#dde9d7;--sand:#f1e4c9;--blue:#dce8e9;--muted:#557065;--white:#fff;--radius:20px}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#e4e9df;color:var(--ink);font-family:Inter,Arial,Helvetica,sans-serif}button,input{font:inherit;color:inherit}button{cursor:pointer;border:0}button:disabled{opacity:.48;cursor:not-allowed}button:focus-visible,input:focus-visible{outline:3px solid var(--green);outline-offset:3px}svg{flex:none}h1,h2,p{margin:0}h2{font-size:19px;font-weight:750;line-height:1.3}
+.sb-page{min-height:100dvh;display:flex;justify-content:center;align-items:flex-start}.phone-shell{width:min(100%,430px);min-height:100dvh;background:var(--cream);position:relative;display:flex;flex-direction:column;box-shadow:0 0 36px #183c3520}.topbar{height:76px;position:sticky;top:0;z-index:30;background:var(--cream);padding:20px;display:flex;align-items:center;justify-content:space-between;gap:14px}.brand{display:flex;align-items:center;gap:8px;background:none;padding:0;min-height:44px}.brand strong{font-size:16px;font-weight:800}.score{display:flex;align-items:center;gap:7px;padding:8px 12px;border-radius:22px;background:var(--sand);font-size:14px;font-weight:800}
+.content{padding:10px 20px 28px;display:flex;flex-direction:column;gap:16px;flex:1}.headline{display:flex;flex-direction:column;gap:8px}.headline h1{font-size:32px;letter-spacing:-1.15px;line-height:1.14;font-weight:800;overflow-wrap:anywhere}.headline p,.body-copy{color:var(--muted);font-size:15px;line-height:1.55}.kicker{color:var(--green);font-size:11px;letter-spacing:.7px;font-weight:800}.btn{width:100%;display:flex;align-items:center;justify-content:center;gap:12px;min-height:54px;padding:12px 16px;border-radius:27px;background:var(--ochre);color:var(--ink);font-size:16px;font-weight:800;text-align:center}.btn.secondary{background:transparent;min-height:44px;color:var(--green);font-size:14px}.btn:hover:not(:disabled){filter:brightness(.97)}.back,.text-link{display:flex;gap:8px;align-items:center;background:none;padding:5px 0;min-height:36px;color:var(--green);font-weight:750;font-size:14px;text-align:left}
+.welcome{min-height:100dvh;display:flex;flex-direction:column;justify-content:space-between;gap:24px;background:var(--ink) url("/sierras-bayas/fondo.png") center/cover no-repeat;padding:max(44px,env(safe-area-inset-top)) 28px max(54px,env(safe-area-inset-bottom));position:relative}.welcome-top{display:flex;flex-direction:column;align-items:flex-start;gap:9px}.welcome-top span{font-size:12px;font-weight:800}.welcome-top h1{font-size:clamp(36px,10vw,43px);font-weight:800;line-height:1.13;letter-spacing:-1.6px}.welcome-top p{font-size:17px}.welcome-bottom{display:flex;flex-direction:column;gap:17px;color:var(--cream)}.welcome-bottom p{font-weight:800;font-size:16px}.welcome-bottom .btn{min-height:60px}
+.location{display:flex;align-items:center;gap:9px;min-height:28px;font-size:13px}.location strong{flex:1;font-weight:750}.location button{background:none;color:var(--green);font-size:12px;font-weight:800;min-height:36px}.landscape{background:var(--pale) url("/sierras-bayas/fondo.png") center 48%/cover no-repeat;border-radius:17px;min-height:180px}.host-card{overflow:hidden;position:relative;border-radius:21px;background:var(--ink);min-height:182px}.host-card .landscape{height:182px;border-radius:0;background-position:center 46%}.host-copy{position:absolute;bottom:0;left:0;right:0;background:#183c35ef;color:var(--cream);padding:16px;display:flex;align-items:center;gap:10px;justify-content:space-between}.host-copy h2{font-size:23px;font-weight:800}.host-copy p{font-size:13px;margin-top:4px}.host-copy button{background:transparent;color:var(--cream);padding:10px;min-height:44px}.detail-art{height:236px;background-position:center 46%}
+.game-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.game-tile{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;text-align:left;gap:10px;border-radius:20px;min-height:126px;padding:15px}.game-tile strong{font-size:17px;line-height:1.25;font-weight:800}.game-tile span{font-size:12px;color:var(--muted)}.gold{background:var(--sand)!important}.blue{background:var(--blue)!important}.mint{background:var(--pale)!important}.clay{background:#f2decf!important}
+.place-row{width:100%;display:flex;align-items:center;gap:12px;padding:12px;background:white;border-radius:16px;text-align:left;min-height:72px}.code{width:46px;height:46px;border-radius:12px;display:grid;place-items:center;flex-shrink:0;font-size:18px;font-weight:800;background:var(--sand)}.row-text{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px;overflow-wrap:anywhere}.row-text strong{font-size:14px;line-height:1.28;font-weight:800}.row-text small{font-size:12px;color:var(--muted)}.rows,.options{display:flex;flex-direction:column;gap:10px}
+.filters,.pills{display:flex;gap:7px;flex-wrap:wrap;align-items:center}.filters button,.pill{background:var(--pale);min-height:34px;padding:9px 12px;border-radius:18px;font-size:12px;font-weight:750;display:inline-flex;align-items:center}.filters button.active{background:var(--ochre)}.search{background:white;border-radius:17px;padding:0 14px;min-height:50px;display:flex;align-items:center;gap:10px}.search input{width:100%;min-width:0;background:transparent;border:0;outline:none;font-size:14px}.map-image{width:100%;height:auto;border-radius:20px;display:block}.note{font-size:12px;line-height:1.5;color:var(--muted)}
+.game-head{display:flex;align-items:center;gap:12px}.game-head .headline{min-width:0;flex:1}.game-head h1{font-size:27px}.game-head .kicker{overflow-wrap:anywhere}.panel{display:flex;flex-direction:column;gap:10px;padding:18px 16px;background:white;border-radius:20px;line-height:1.45}.panel p{font-size:14px;color:var(--muted)}.answer{display:flex;align-items:center;gap:12px;background:white;border:2px solid transparent;border-radius:16px;min-height:60px;padding:10px 12px;text-align:left;font-size:15px;font-weight:700;line-height:1.3;overflow-wrap:anywhere}.answer>span{display:grid;place-items:center;min-width:36px;height:36px;background:var(--pale);border-radius:11px}.answer.chosen{border-color:var(--green);background:#edf2e7}.feedback{color:#8c392a;font-size:14px;font-weight:700;line-height:1.5}.large-emblem{width:150px;height:150px;align-self:center;display:grid;place-items:center;border-radius:32px;margin:10px 0 6px}.progress{height:8px;background:#e1e5dc;display:flex;gap:6px;overflow:hidden;border-radius:8px}.progress span{flex:1;background:#e1e5dc;border-radius:8px}.progress span.filled{background:var(--green)}.collection .progress span{flex:none}.story-slots{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}.story-slots span{background:var(--pale);border-radius:12px;text-align:center;padding:12px 5px;font-size:12px;font-weight:750;overflow-wrap:anywhere}
+.reward-stamp{align-self:center;width:214px;min-height:224px;border:3px solid var(--ochre);border-radius:26px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px;animation:stamp-in .4s ease-out}.reward-stamp span,.reward-stamp small{font-weight:800;letter-spacing:1px;font-size:11px}.reward-stamp strong{font-size:32px;line-height:1;font-weight:800}.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stats>div{padding:16px;border-radius:20px;display:flex;flex-direction:column;gap:5px}.stats b{font-size:27px;font-weight:800}.stats span{font-size:12px;color:var(--muted)}.collection{display:flex;flex-direction:column;gap:13px}.collection h2{font-size:17px}.stamp-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.mini-stamp{min-height:112px;background:white;border-radius:17px;padding:10px 6px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center}.mini-stamp strong{font-weight:750;font-size:11px;line-height:1.2;overflow-wrap:anywhere}.mini-stamp small{font-size:12px;color:var(--muted)}.bottom-nav{position:sticky;bottom:0;z-index:20;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));background:white;padding:0 8px max(10px,env(safe-area-inset-bottom));border-top:1px solid #e5e2d8;margin-top:auto;min-height:75px}.bottom-nav button{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:12px 2px 5px;background:none;font-size:10px;font-weight:700;min-height:65px}.bottom-nav button.active:before{content:"";position:absolute;top:0;width:65%;height:4px;border-radius:3px;background:var(--ochre)}
+@keyframes stamp-in{from{opacity:0;transform:scale(.8) rotate(-5deg)}to{opacity:1;transform:scale(1)}}@media (min-width:600px){.sb-page{padding:16px}.phone-shell{min-height:calc(100dvh - 32px);border-radius:30px;overflow:clip}.welcome{min-height:calc(100dvh - 32px)}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;scroll-behavior:auto!important}}
+
+/* TRAMO 10 — la aventura continúa después de la bienvenida */
+.phone-shell:not(.landing-shell){
+ color:#fff4dc;
+ background-color:#142e27;
+ background-image:linear-gradient(180deg,rgba(12,25,37,.35) 0%,rgba(18,32,27,.1) 23%,rgba(13,31,26,.44) 67%,#142e27 100%),url("/sierras-bayas/aventura/escenario.png");
+ background-repeat:no-repeat;
+ background-size:100% max(100dvh,850px),100% max(100dvh,850px);
+ background-position:center top;
+}
+.phone-shell:not(.landing-shell) .topbar{height:66px;background:linear-gradient(180deg,#152a2bd9,#152a2b00);color:#fff4dc;padding:12px 18px;position:relative}
+.phone-shell:not(.landing-shell) .brand{color:#fff4dc;text-shadow:0 2px 4px #13251e}
+.phone-shell:not(.landing-shell) .brand strong{font-weight:900;letter-spacing:.1px}
+.phone-shell:not(.landing-shell) .score{color:#ffe2a0;border:1px solid #e8b05c;background:linear-gradient(#744b2b,#412b1e);box-shadow:0 3px 8px #17231888}
+.phone-shell:not(.landing-shell) .content{padding:8px 18px 24px;gap:16px}
+.phone-shell:not(.landing-shell) .headline h1,.adventure-heading h1{color:#fff0cd;letter-spacing:-.8px;line-height:1.13;text-shadow:0 2px 0 #6a381c,0 4px 0 #422b20,0 5px 12px #080f13c9;font-weight:900}
+.phone-shell:not(.landing-shell) .headline p,.phone-shell:not(.landing-shell) .body-copy,.phone-shell:not(.landing-shell) .note{color:#f7e5bf;text-shadow:0 1px 3px #12291d}
+.phone-shell:not(.landing-shell) .kicker{color:#ffdda0;text-shadow:0 1px 3px #10211c}
+.phone-shell:not(.landing-shell) .btn{color:#3e271a;background:linear-gradient(#ffd881,#e2a746);border:1px solid #ffefb7;box-shadow:0 4px 0 #87501d,0 6px 14px #071f1790}
+.phone-shell:not(.landing-shell) .btn.secondary{color:#ffe7ad;background:#152a22a3;border:1px solid #d9b56865;box-shadow:none}
+.phone-shell:not(.landing-shell) .back,.phone-shell:not(.landing-shell) .text-link{color:#ffe4ad}
+.phone-shell:not(.landing-shell) .location{width:100%;background:#142a25b5;border:1px solid #eddb9860;border-radius:24px;padding:6px 10px;gap:7px;color:#fff3d7}
+.phone-shell:not(.landing-shell) .location button{color:#ffdf96;min-height:30px;font-size:11px}
+.adventure-heading{text-align:center;display:flex;flex-direction:column;gap:5px;padding:9px 0 0}
+.adventure-heading h1{font-size:clamp(31px,8vw,41px)}
+.adventure-heading p{font-size:14px;color:#fff4da;font-weight:650;text-shadow:0 2px 5px #101f19}
+.screen-games .floating-games{gap:5px 8px;padding:12px 0 5px;align-items:start}
+.floating-game{min-width:0;background:transparent;display:flex;align-items:center;flex-direction:column;justify-content:center;position:relative;gap:1px;color:#fff4dc;padding:0 1px;min-height:150px;transition:transform .2s ease}
+.floating-game img{width:100%;max-width:164px;height:clamp(102px,28vw,145px);object-fit:contain;filter:drop-shadow(0 9px 8px #091b15a6);animation:object-float 3.8s ease-in-out infinite}
+.floating-game:nth-child(2) img{animation-delay:-1.3s}.floating-game:nth-child(3) img{animation-delay:-2.1s}.floating-game:nth-child(4) img{animation-delay:-.8s}
+.floating-game strong,.passport-link strong{display:block;background:linear-gradient(180deg,#744527,#40291b);color:#ffedc7;border:1px solid #bc874d;border-radius:30px;padding:7px 9px;box-shadow:0 4px 7px #0d171a90;text-align:center;font-size:14px;line-height:1.2;font-weight:850;white-space:normal}
+.floating-game span,.passport-link small{font-size:11px;text-shadow:0 1px 3px #14271f;color:#fbe4b5;padding:3px 2px}
+.floating-game:active,.passport-link:active{transform:scale(.94)}
+.passport-link{display:flex;flex-direction:column;align-items:center;justify-content:center;align-self:center;background:none;color:#ffedc7;gap:0;padding:0 8px;min-width:148px}
+.passport-link img{width:112px;height:100px;object-fit:contain;filter:drop-shadow(0 6px 7px #101b14c0)}
+.passport-link strong{font-size:14px;padding:6px 16px}
+.album-book{width:100%;aspect-ratio:1214/1295;background:url("/sierras-bayas/aventura/album.png") center/100% 100% no-repeat;position:relative;filter:drop-shadow(0 10px 12px #071a15b0);margin-top:6px}
+.album-spread{position:absolute;inset:12% 10% 12% 8%;display:grid;grid-template-columns:1fr 1fr;gap:10%;color:#6e3b20}
+.album-leaf{display:grid;grid-template-rows:1fr 1fr;min-height:0;gap:2%}
+.album-slot{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:0;width:100%;border:0;background:none;color:#6c3c20;text-shadow:none;padding:0 3px;text-align:center}
+.album-slot strong{font-size:clamp(9px,2.5vw,12px);font-weight:900;line-height:1.12;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;max-width:100%}
+.album-medal{width:85%;max-width:105px;aspect-ratio:1;min-height:0;display:grid;place-items:center}
+.album-medal img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 3px 3px #66380055)}
+.stamp-imprint{position:relative;width:80%;aspect-ratio:1;display:grid;place-items:center;border:2px dashed #a26739;outline:1px solid #a26739;outline-offset:3px;border-radius:50%;color:#9a6037;background:#c18a3914;opacity:.67}
+.stamp-lock{position:absolute;bottom:9%;right:15%;border-radius:50%;background:#efc88b;padding:2px}
+.album-controls{display:flex;justify-content:space-between;align-items:center;text-align:center;gap:12px;color:#ffe7ab}
+.album-controls button{display:grid;place-items:center;width:50px;height:45px;background:#744527;border:1px solid #d6a363;border-radius:50%;color:#ffe6ad}
+.album-controls span{font-weight:800;font-size:14px;text-shadow:0 2px 4px #141d16}
+.album-legend{display:flex;justify-content:center;gap:12px;font-size:12px;color:#f7e5bf;text-shadow:0 1px 4px #14251b}
+.game-object,.reward-object{align-self:center;display:flex;flex-direction:column;align-items:center;gap:8px;max-width:100%;padding:4px 0}
+.game-object img{width:min(65vw,215px);height:auto;object-fit:contain;filter:drop-shadow(0 9px 10px #091a12a8);animation:object-float 3.8s ease-in-out infinite}
+.challenge-object{width:70px;height:70px;object-fit:contain;filter:drop-shadow(0 4px 4px #101b15b0)}
+.reward-object img{width:min(68vw,230px);height:auto;animation:stamp-in .5s ease-out;filter:drop-shadow(0 6px 12px #0a1911aa)}
+.reward-object span{font-weight:800;font-size:12px;letter-spacing:.4px;color:#ffe2a1;text-shadow:0 1px 4px #10221a}
+.phone-shell:not(.landing-shell) .panel{color:#51351f;background:linear-gradient(130deg,#f8dda8,#edc482);border:1px solid #c88c40;border-radius:10px 16px 12px 18px;box-shadow:0 5px 9px #17241870}
+.phone-shell:not(.landing-shell) .panel p,.phone-shell:not(.landing-shell) .panel .kicker{color:#76532e;text-shadow:none}
+.phone-shell:not(.landing-shell) .answer{background:#193d31e8;color:#fff6df;border:1px solid #d2b57988;border-radius:25px;box-shadow:0 3px 0 #0d2d22}
+.phone-shell:not(.landing-shell) .answer>span{background:#b8813e;color:#fff1d0;border-radius:50%}
+.phone-shell:not(.landing-shell) .answer.chosen{background:#4c6741;border:2px solid #ffd17b}
+.phone-shell:not(.landing-shell) .feedback{color:#ffe4b4;background:#763d2ec9;padding:10px 12px;border-radius:14px}
+.phone-shell:not(.landing-shell) .pill,.phone-shell:not(.landing-shell) .filters button{background:#1b382cdd;color:#ffedc4;border:1px solid #a38b537d}
+.phone-shell:not(.landing-shell) .filters button.active{color:#472d16;background:#e7b969}
+.phone-shell:not(.landing-shell) .search{background:#f3d6a3;color:#473120}
+.phone-shell:not(.landing-shell) .search input::placeholder{color:#705233}
+.phone-shell:not(.landing-shell) .place-row{background:#1a342be0;color:#ffeec9;border:1px solid #bda2775c;border-radius:24px 8px 24px 8px;box-shadow:0 4px 8px #0e211948}
+.phone-shell:not(.landing-shell) .place-row .code{color:#583920;border-radius:50%}
+.phone-shell:not(.landing-shell) .row-text small{color:#d6c59f}
+.phone-shell:not(.landing-shell) .story-slots span{color:#503725;background:#d6ad71;border:1px dashed #986339}
+.phone-shell:not(.landing-shell) .detail-art{background-image:url("/sierras-bayas/aventura/escenario.png")}
+.phone-shell:not(.landing-shell) .bottom-nav{background:#192b26ed;border:1px solid #d2aa6266;color:#e9cc99;margin:0 12px 12px;padding:0 5px 4px;border-radius:38px;box-shadow:0 6px 16px #081d17a0;min-height:61px;bottom:10px;backdrop-filter:blur(8px)}
+.phone-shell:not(.landing-shell) .bottom-nav button{font-size:9px;gap:4px;min-height:58px;padding:9px 1px 4px}
+.phone-shell:not(.landing-shell) .bottom-nav button.active{color:#ffdb83}
+.phone-shell:not(.landing-shell) .bottom-nav button.active:before{top:auto;bottom:0;width:42%;background:#f4cb73;height:3px}
+@keyframes object-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@media(prefers-reduced-motion:reduce){.floating-game img,.game-object img{animation:none}}
+
+/* TRAMO 11 — selección de territorios y objetos de colección */
+.route-objects{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;align-items:start}
+.route-object{display:flex;flex-direction:column;align-items:center;gap:5px;padding:4px 0;background:none;color:#fff0cc;min-width:0}
+.route-object img{width:100%;max-height:128px;aspect-ratio:1.5;object-fit:contain;filter:drop-shadow(0 6px 6px #091b15a6);transition:transform .18s ease}
+.route-object strong{background:linear-gradient(#704326,#402b1e);border:1px solid #bc874d;border-radius:28px;padding:8px 10px;box-shadow:0 4px 7px #0d171a90;font-size:13px;line-height:1.2;font-weight:850;text-align:center}
+.route-object small{font-size:11px;text-shadow:0 2px 4px #111e13;color:#ffe2a1}
+.route-object.selected img{transform:translateY(-5px);filter:drop-shadow(0 0 9px #f8c96199)}
+.route-object.selected strong{background:linear-gradient(#ffd981,#c99945);color:#52321b;border-color:#ffedb6}
+.route-object:active img{transform:scale(.95)}
+.map-link{display:flex;align-items:center;gap:12px;width:100%;background:linear-gradient(100deg,#51351fe8,#674b27d8);color:#fff0c7;border:1px solid #d3ae62a0;border-radius:36px;padding:5px 12px 5px 7px;box-shadow:0 4px 9px #14201980}
+.map-link img{width:54px;height:64px;object-fit:contain}.map-link span{flex:1;text-align:left;font-weight:850;font-size:15px}
+.route-filter-label{font-size:13px;font-weight:800;color:#f7e0b8;text-shadow:0 2px 3px #17281d}
+.route-trail{position:relative;display:flex;flex-direction:column;gap:10px}
+.route-trail:before{position:absolute;top:26px;bottom:26px;left:36px;content:"";width:3px;border-left:2px dashed #d9af63;opacity:.7;pointer-events:none}
+.phone-shell:not(.landing-shell) .route-trail .place-row{position:relative;background:linear-gradient(90deg,transparent 0 70px,#20372ddb 70px);border:0;border-radius:25px 7px 7px 25px;box-shadow:none;padding:7px 8px 7px 12px;min-height:75px}
+.phone-shell:not(.landing-shell) .route-trail .code{border:2px solid #fbe6aa;background:linear-gradient(#ffe6a6,#bd863f)!important;box-shadow:0 3px 8px #091f18b0;font-size:17px;color:#654020}
+.phone-shell:not(.landing-shell) .route-trail .code.mint{background:linear-gradient(#d8e6ad,#88a56a)!important;color:#263f2b}
+.phone-shell:not(.landing-shell) .route-trail .row-text{padding-left:4px}
+.route-trail .row-text strong{font-size:15px;text-shadow:0 1px 3px #101f18}
+.scroll-map{display:block;width:100%;max-height:min(52dvh,460px);object-fit:contain;filter:drop-shadow(0 8px 8px #102119aa)}
+.map-note{text-align:center}
+.compact-routes .route-object img{max-height:90px}
+.place-diorama,.section-object{display:flex;align-items:center;justify-content:center;min-height:0;margin:4px -5px}
+.place-diorama img{width:100%;max-height:245px;object-fit:contain;filter:drop-shadow(0 9px 8px #0e1b15aa)}
+.section-object img{width:100%;max-width:340px;max-height:242px;object-fit:contain;filter:drop-shadow(0 9px 10px #0a1812a6);animation:object-float 4.5s ease-in-out infinite}
+.tourism-object img{max-width:245px;max-height:210px}
+.event-ticket{position:relative;color:#54361f;background:linear-gradient(115deg,#fbe2ad,#e5b470);border:2px solid #d1944a;padding:20px 15px;border-radius:12px 20px 12px 20px;box-shadow:0 6px 12px #10231ba0;text-align:center;display:flex;flex-direction:column;gap:9px;overflow:hidden}
+.event-ticket h2{font-size:21px;font-weight:850}.event-ticket p{font-size:14px;line-height:1.5}.event-ticket small{font-size:12px;color:#80582f;font-weight:700}.ticket-dot{font-size:22px;color:#9b622d}
+.section-caption{font-weight:850;color:#fff0cd;text-shadow:0 2px 4px #172319}
+.screen-play .game-head{justify-content:center;align-items:center;flex-direction:column;gap:6px;text-align:center}
+.screen-play .challenge-object{width:104px;height:104px;animation:object-float 4s ease-in-out infinite}
+.screen-play .game-head .headline{width:100%}
+.screen-play .panel{position:relative;background:linear-gradient(135deg,#f9dfa6,#edbc78);border:2px solid #d09c4c;border-radius:20% 14% 17% 12% / 8% 9% 9% 8%;text-align:center;padding:20px 15px;box-shadow:0 5px 10px #121f19a0}
+.screen-play .panel h2{font-size:21px;line-height:1.3}
+.screen-play .answer{min-height:60px}
+@media(prefers-reduced-motion:reduce){.section-object img,.screen-play .challenge-object{animation:none}}
+
+/* TRAMO 12 — cromos con identidad patrimonial */
+.cromo-pending{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;aspect-ratio:1;width:min(58vw,210px);max-width:100%;border:3px double #d2af62;border-radius:50%;background:radial-gradient(#cfaa6155,#1f3c2b);color:#ffe4a0;box-shadow:inset 0 0 0 7px #b98d3b33,0 6px 10px #172a20}
+.cromo-pending b{font-size:26px}
+.album-medal .cromo-pending{width:80%;height:auto;box-shadow:none;border:2px double #9c6c36;background:#ad7b3427;color:#8b5b2f}
+.album-medal .cromo-pending svg{width:18px;height:18px}.album-medal .cromo-pending b{font-size:13px}
+.cromo-note{background:linear-gradient(120deg,#f8dfae,#edc487);border:1px solid #d6a35d;color:#573915;padding:14px 16px;border-radius:16px 9px 16px 9px;display:flex;flex-direction:column;gap:7px;box-shadow:0 4px 9px #18251c80}
+.cromo-note strong{font-size:15px}.cromo-note p{font-size:13px;line-height:1.45}.cromo-note a{color:#643713;font-size:12px;font-weight:800;text-decoration:underline}.cromo-note small{font-size:10px;opacity:.78}
+.album-spread{animation:turn-leaf .36s cubic-bezier(.15,.65,.35,1);transform-origin:center center}
+@keyframes turn-leaf{from{opacity:0;transform:perspective(500px) rotateY(-12deg) scaleX(.96)}to{opacity:1;transform:none}}
+.achievement-trail{display:flex;flex-direction:column;gap:8px}
+.achievement-trail h2{font-size:18px;color:#fff0cd;text-shadow:0 2px 3px #16231b}
+.achievement{display:flex;gap:9px;align-items:center;color:#e7d7b3;background:#142c23ce;border:1px solid #a67a3d55;border-radius:22px;padding:10px 12px}.achievement span{flex:1;font-weight:750;font-size:13px}.achievement small{font-size:10px}.achievement.achieved{color:#ffe5a2;border-color:#d6ad5a;background:#5d462bdc}.achievement.achieved svg{fill:#f4c96c}
+.audio-toggle{display:flex;align-items:center;justify-content:center;gap:7px;align-self:center;background:none;color:#ffe2a1;font-size:12px;padding:8px 12px;border:1px solid #b48d4f66;border-radius:20px}
+@media(prefers-reduced-motion:reduce){.album-spread{animation:none}}
+
+/* TRAMO 13 — fondos de color por pantalla. La bienvenida queda intacta. */
+.phone-shell:not(.landing-shell){
+ --theme-top:#ef7cda;--theme-mid:#f7b6e8;--theme-bottom:#fff5fb;--theme-deep:#7e175f;--theme-ink:#201025;
+ background-color:var(--theme-bottom);
+ background-image:linear-gradient(180deg,var(--theme-top) 0%,var(--theme-mid) 48%,var(--theme-bottom) 100%);
+ background-repeat:no-repeat;background-position:center top;background-size:100% max(100dvh,850px);
+ color:var(--theme-ink);
+}
+.phone-shell:is([data-screen="places"],[data-screen="map"],[data-screen="host"]),
+.phone-shell:is([data-screen="intro"],[data-screen="play"])[data-mode="story"]{
+ --theme-top:#bdff58;--theme-mid:#dcfba5;--theme-bottom:#f8fff0;--theme-deep:#385f13;--theme-ink:#152610;
+}
+.phone-shell:is([data-screen="tourism"]),
+.phone-shell:is([data-screen="intro"],[data-screen="play"])[data-mode="quiz"]{
+ --theme-top:#62b5ff;--theme-mid:#adddff;--theme-bottom:#f1fbff;--theme-deep:#165a91;--theme-ink:#10253b;
+}
+.phone-shell:is([data-screen="passport"],[data-screen="success"],[data-screen="reward"]),
+.phone-shell:is([data-screen="intro"],[data-screen="play"])[data-mode="detective"]{
+ --theme-top:#b591f9;--theme-mid:#d9c6ff;--theme-bottom:#f9f4ff;--theme-deep:#60329c;--theme-ink:#231339;
+}
+.phone-shell:not(.landing-shell) .topbar{background:transparent;color:var(--theme-ink)}
+.phone-shell:not(.landing-shell) .brand,
+.phone-shell:not(.landing-shell) .headline h1,
+.phone-shell:not(.landing-shell) .adventure-heading h1{color:var(--theme-ink);text-shadow:none}
+.phone-shell:not(.landing-shell) .headline p,.phone-shell:not(.landing-shell) .body-copy,
+.phone-shell:not(.landing-shell) .note,.phone-shell:not(.landing-shell) .kicker,
+.phone-shell:not(.landing-shell) .adventure-heading p{color:var(--theme-ink);text-shadow:none}
+.phone-shell:not(.landing-shell) .kicker{opacity:.82}
+.phone-shell:not(.landing-shell) .score{background:rgba(255,255,255,.76);color:var(--theme-ink);border:0;box-shadow:0 4px 12px #28203b13}
+.phone-shell:not(.landing-shell) .location{background:rgba(255,255,255,.74);color:var(--theme-ink);border:0}
+.phone-shell:not(.landing-shell) .location button{color:var(--theme-deep)}
+.phone-shell:not(.landing-shell) .floating-game,.phone-shell:not(.landing-shell) .passport-link,
+.phone-shell:not(.landing-shell) .route-object{color:var(--theme-ink)}
+.phone-shell:not(.landing-shell) :is(.floating-game strong,.passport-link strong,.route-object strong){
+ background:#251c2d;color:white;border:0;box-shadow:0 3px 8px #28203b25;border-radius:24px;
+}
+.phone-shell:not(.landing-shell) :is(.floating-game span,.passport-link small,.route-object small,.route-filter-label){
+ color:var(--theme-ink);text-shadow:none;
+}
+.phone-shell:not(.landing-shell) :is(.floating-game img,.game-object img,.passport-link img,.route-object img,.challenge-object,.section-object img,.place-diorama img){
+ filter:drop-shadow(0 7px 7px #28203b35);
+}
+.phone-shell:not(.landing-shell) .route-object.selected strong{background:var(--theme-deep);color:#fff}
+.phone-shell:not(.landing-shell) .btn{background:var(--theme-ink);color:white;box-shadow:0 4px 12px #29213e25;border:0}
+.phone-shell:not(.landing-shell) .btn.secondary{background:#ffffffa8;color:var(--theme-ink);border:1px solid #ffffffd9;box-shadow:none}
+.phone-shell:not(.landing-shell) .back,.phone-shell:not(.landing-shell) .text-link{color:var(--theme-deep)}
+.phone-shell:not(.landing-shell) .panel{background:#ffffffd9;color:var(--theme-ink);box-shadow:0 4px 12px #29213e17;border:1px solid #ffffffd0}
+.phone-shell:not(.landing-shell) .panel p,.phone-shell:not(.landing-shell) .panel .kicker{color:var(--theme-ink)}
+.phone-shell:not(.landing-shell) .answer{background:#ffffffdc;color:var(--theme-ink);border:2px solid transparent;box-shadow:0 3px 9px #29213e10}
+.phone-shell:not(.landing-shell) .answer>span{background:var(--theme-mid);color:var(--theme-ink)}
+.phone-shell:not(.landing-shell) .answer.chosen{border-color:var(--theme-deep);background:#fff}
+.phone-shell:not(.landing-shell) .feedback{background:#fff1f1;color:#8c243e}
+.phone-shell:not(.landing-shell) .pill,.phone-shell:not(.landing-shell) .filters button{background:#ffffffc9;color:var(--theme-ink);border:0}
+.phone-shell:not(.landing-shell) .filters button.active{background:var(--theme-ink);color:white}
+.phone-shell:not(.landing-shell) .search{background:#ffffffd9;color:var(--theme-ink)}
+.phone-shell:not(.landing-shell) .search input::placeholder{color:#61576b}
+.phone-shell:not(.landing-shell) .place-row{background:#ffffffd9;color:var(--theme-ink);border:0;box-shadow:none}
+.phone-shell:not(.landing-shell) .route-trail .place-row{background:linear-gradient(90deg,transparent 0 70px,#ffffffc9 70px)}
+.phone-shell:not(.landing-shell) .route-trail:before{border-color:var(--theme-deep)}
+.phone-shell:not(.landing-shell) .row-text small{color:var(--theme-ink);opacity:.75}
+.phone-shell:not(.landing-shell) .route-trail .row-text strong{text-shadow:none}
+.phone-shell:not(.landing-shell) .map-link{background:#ffffffd9;color:var(--theme-ink);border:0;box-shadow:0 4px 12px #29213e17}
+.phone-shell:not(.landing-shell) :is(.album-controls,.album-controls span,.album-legend,.section-caption,.achievement-trail h2,.reward-object span){
+ color:var(--theme-ink);text-shadow:none;
+}
+.phone-shell:not(.landing-shell) .album-controls button{background:var(--theme-ink);color:white;border:0}
+.phone-shell:not(.landing-shell) .achievement{background:#ffffffd2;color:var(--theme-ink);border:0}
+.phone-shell:not(.landing-shell) .achievement.achieved{background:var(--theme-ink);color:#fff}
+.phone-shell:not(.landing-shell) .audio-toggle{color:var(--theme-ink);background:#ffffffb3;border:0}
+.phone-shell:not(.landing-shell) .bottom-nav{background:#ffffffed;color:var(--theme-ink);border:0;box-shadow:0 5px 22px #29213e1f}
+.phone-shell:not(.landing-shell) .bottom-nav button.active{color:var(--theme-deep)}
+.phone-shell:not(.landing-shell) .bottom-nav button.active:before{background:var(--theme-deep)}
+
+/* TRAMO 14 — el lugar como protagonista, sin casillero */
+.screen-games .current-place{display:flex;flex-direction:column;align-items:center;gap:6px;padding:8px 2px 0;text-align:center;color:var(--theme-ink)}
+.current-place-eyebrow{display:flex;align-items:center;justify-content:center;gap:5px;font-size:14px;font-weight:750;line-height:1.3;opacity:.85}
+.current-place h1{font-size:clamp(27px,7.6vw,36px);font-weight:900;letter-spacing:-.8px;line-height:1.12;max-width:100%;overflow-wrap:anywhere}
+.current-place-actions{display:flex;align-items:center;justify-content:center;gap:15px}
+.current-place-actions button{display:flex;align-items:center;gap:5px;background:none;color:var(--theme-deep);min-height:32px;padding:5px 0;font-weight:800;font-size:12px}
+.game-selection-heading{text-align:center;padding-top:4px}
+.game-selection-heading h2{font-size:clamp(21px,5.7vw,26px);font-weight:850;line-height:1.2;letter-spacing:-.35px;color:var(--theme-ink)}
+.screen-games .floating-games{padding-top:6px}
+
+/* TRAMO 15 — pantalla de tesoro más directa y pista con estilo de juego */
+.phone-shell[data-screen="play"][data-mode="treasure"] .screen-play{gap:11px}
+.phone-shell[data-screen="play"][data-mode="treasure"] .game-head{padding:0;margin-top:-5px}
+.phone-shell[data-screen="play"][data-mode="treasure"] .challenge-object{width:106px;height:106px}
+.treasure-challenge{display:flex;flex-direction:column;gap:13px}
+.phone-shell:not(.landing-shell) .screen-play .treasure-clue{
+ position:relative;isolation:isolate;overflow:hidden;display:flex;align-items:center;
+ flex-direction:column;gap:9px;padding:23px 17px 22px;border:1px solid #ffffffec;
+ background:linear-gradient(145deg,#fffdfc 12%,#fff3fa 62%,#f5d6ee);
+ border-radius:29px 14px 29px 14px;
+ box-shadow:0 4px 0 #a33b8844,0 12px 24px #86235d24;
+}
+.treasure-clue:before,.treasure-clue:after{content:"";position:absolute;z-index:-1;pointer-events:none}
+.treasure-clue:before{width:110px;height:110px;border:1px solid #de83c34d;border-radius:50%;right:-45px;top:-51px;box-shadow:0 0 0 11px #eaa0d421,0 0 0 22px #eaa0d412}
+.treasure-clue:after{width:86px;height:86px;border:1px solid #de83c34d;border-radius:50%;left:-41px;bottom:-46px;box-shadow:0 0 0 10px #eaa0d421,0 0 0 20px #eaa0d412}
+.phone-shell:not(.landing-shell) .treasure-clue .treasure-clue-number{display:inline-block;color:#84235e;background:#f5c7e8;padding:5px 12px;border-radius:20px;letter-spacing:.7px;font-size:11px;font-weight:900}
+.phone-shell:not(.landing-shell) .treasure-clue h2{font-size:21px;line-height:1.22;letter-spacing:-.4px}
+.phone-shell:not(.landing-shell) .treasure-clue p{font-size:15px;font-weight:700;line-height:1.4}
+.treasure-challenge>h2{font-size:19px;font-weight:850;line-height:1.25}
+.treasure-challenge .text-link{min-height:39px;padding:4px 2px}
+.phone-shell:not(.landing-shell) .treasure-challenge .answer{min-height:55px;border-radius:19px 28px 28px 19px;border:1px solid #ffffffcf;background:#fff9fde8;box-shadow:0 3px 0 #af4c901b}
+.phone-shell:not(.landing-shell) .treasure-challenge .answer.chosen{background:#fff;border:2px solid #8d2e6e;box-shadow:0 3px 0 #8d2e6e40}
+.phone-shell:not(.landing-shell) .treasure-challenge .answer>span{background:linear-gradient(#f3c5e9,#e6a1d7)}
+.phone-shell:not(.landing-shell) .treasure-challenge .btn{min-height:50px;box-shadow:0 4px 0 #26102c25}
+
+/* TRAMO 16 — cartografía real, accesible y sin puntos inventados */
+.real-map-icon{display:grid;place-items:center;width:49px;height:49px;border-radius:17px;background:var(--theme-mid);color:var(--theme-deep);flex:none}
+.phone-shell:not(.landing-shell) .map-link .real-map-icon{flex:none;text-align:center}
+.real-map-frame{width:100%;background:#fff;border:3px solid #ffffffdf;border-radius:24px;overflow:hidden;box-shadow:0 10px 25px #22382026}
+.real-map-frame iframe{display:block;width:100%;height:clamp(360px,53dvh,510px);border:0;background:#e8eadf}
+.real-map-credit{padding:5px 9px;text-align:right;font-size:10px;color:#384d35;background:#fff}
+.real-map-credit a{text-decoration:underline}
+.real-map-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.real-map-actions a{display:flex;align-items:center;justify-content:center;gap:6px;min-height:46px;padding:8px;background:var(--theme-ink);color:#fff;text-decoration:none;border-radius:23px;font-size:12px;font-weight:800;text-align:center}
+.real-map-actions a:first-child{background:#ffffffd9;color:var(--theme-ink)}
